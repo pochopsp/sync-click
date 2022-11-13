@@ -1,8 +1,18 @@
+# ---- BEGIN ignore file without extension
+
 # ignore all
 *
 
-# UN-ignore all with extensions
+# UN-ignore all with extension
 !*.*
 
 # UN-ignore all dirs
 !*/
+
+# ------ END ignore file without extension
+
+# igore .exe files
+*.exe
+
+# ignore .vscode dir
+.vscode

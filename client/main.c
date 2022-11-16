@@ -9,11 +9,11 @@
 #include <unistd.h>
 
 #include "./left_click.h"
+#include "../macros.h"
 
 // NETWORK CONSTANTS
-#define MIN_PORT 1025
-#define MAX_PORT 65535
-#define DEF_PORT 29900
+#define TCP_MIN_PORT 1025
+#define TCP_MAX_PORT 65535
 
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
@@ -30,12 +30,12 @@ void handleConnection(int sockfd){
   int readBytes;
   char buff[BUF_SIZE];
 
-  while((readBytes = recv(sockfd, buff, BUF_SIZE, 0)) > 0){
-    if ((strncmp(buff, "exit", 4)) == 0) {
+  while ((readBytes = recv(sockfd, buff, BUF_SIZE, 0)) > 0) {
+    if ((strncmp(buff, EXT_CMND, strlen(EXT_CMND))) == 0) {
       printf("client exit...\n");
       break;
     }
-    else if ((strncmp(buff, "exit", 4)) == 0) {
+    else if ((strncmp(buff, CLK_CMND, strlen(CLK_CMND))) == 0) {
       printf("click received!\n");
       doDelayedLeftClick(0);
     }
@@ -45,10 +45,11 @@ void handleConnection(int sockfd){
 }
 
 void printHelp(char *programName){
-  char *helpMessage = "Usage: %s -a ip_address -p tcp_port"
+  char *helpMessage = "Usage: %s -a ip_address [-p tcp_port] [-h]"
               "  \n  -a sets the given ip_address (ipv4 in dot notation) for the socket we want to connect to"
-              "  \n  -p sets the given tcp_port (from %d to %d, default is %d) for the socket we want to connect to";
-  printf(helpMessage, programName, MIN_PORT, MAX_PORT, DEF_PORT);
+              "  \n  -p sets the given tcp_port (from %d to %d, default is %d) for the socket we want to connect to"
+              "  \n  -h prints this help message";
+  printf(helpMessage, programName, TCP_MIN_PORT, TCP_MAX_PORT, TCP_DEF_PORT);
 }
 
 int main(int argc, char* argv[]){
@@ -58,8 +59,15 @@ int main(int argc, char* argv[]){
 		exit(EXIT_SUCCESS);
 	}
 
+  if(argc == 1){
+		printf("KITAMMUO");
+    exit(EXIT_FAILURE);
+  }
   // TODO parte di validazione e settaggio dell'input
 
+  // TODO spostare in funzione TUTTA la parte di config di rete
+
+  // TODO spostare in funzione la parte di config windows
   // BEGIN instructions needed to use unix socket on windows
   static WSADATA wsaData;
   int wsaerr = WSAStartup(MAKEWORD(2, 0), &wsaData);
@@ -83,7 +91,7 @@ int main(int argc, char* argv[]){
   // assign IP, PORT
   servaddr.sin_family = AF_INET;        
   servaddr.sin_addr.s_addr = inet_addr(dottedIp);
-  servaddr.sin_port = htons(DEF_PORT);
+  servaddr.sin_port = htons(TCP_DEF_PORT);
 
   // connect the client socket to server socket
   if (connect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {

@@ -1,20 +1,22 @@
-#include <sys/wait.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/wait.h>
+
 
 #include "../macros.h"
 #include "./network_functions.h"
 
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
-#define CLI_COUNT 2
+#define DEF_CLI_COUNT 2
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMND"' to send click message to clients or '"EXT_CMND"' to exit.\n"
@@ -31,13 +33,13 @@ void sendClickMessage(int connfd){
 int main(int argc, char* argv[]){
 
 	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
-		printf(HLP_MSSG, argv[0], TCP_DEF_PORT, CLI_COUNT);
+		printf(HLP_MSSG, argv[0], TCP_DEF_PORT, DEF_CLI_COUNT);
 		exit(EXIT_SUCCESS);
 	}
 	// TODO recuperare anche il numero di client che bisogna collegare
 	inputClickClients = -1;
 
-	const int clickClients = inputClickClients > 2 ? inputClickClients : CLI_COUNT;
+	const int clickClients = inputClickClients > 2 ? inputClickClients : DEF_CLI_COUNT;
 
 	// TODO validazione e settaggio parametri
 
@@ -81,12 +83,12 @@ int main(int argc, char* argv[]){
 
 	currentPid = fork(); // duplicate the current process
 
-	if(currentPid != 0) // I am the parent
-	{
+	if(currentPid != 0){ // I am the parent
+	
 		close(pipefd[0]); // close the read-end of the pipe, I'm not going to use it
 
 		char userInput[BUF_SIZE];
-		while(1){
+		while(true){
 			scanf("%s", userInput);
 			if(strcmp(userInput, EXT_CMND) == 0){
 				close(pipefd[1]);
@@ -102,9 +104,9 @@ int main(int argc, char* argv[]){
 
 		wait(NULL); // wait for the child process to exit before I do the same
 		exit(EXIT_SUCCESS);
-	}
-	else // I am the child
-	{
+
+	}else{ // I am the child
+
 		// TODO
 		// fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client
 

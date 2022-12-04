@@ -14,6 +14,17 @@
 #include "../macros.h"
 #include "./network_functions.h"
 
+
+// TODO implementare gestione segnali da terminale (ctrl+c ecc)
+
+
+//a structure we use to pass arguments to threads created for clients connections.
+struct ClientThreadArgs{
+	int clientSockFD;
+    unsigned long clientRTT;
+}
+typedef ClientThreadArgs ClientThreadArgs;
+
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
 #define DEF_CLI_COUNT 2
@@ -25,8 +36,11 @@
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 
 
-void sendClickMessage(int connfd){
-	write(connfd, CLK_CMND, strlen(CLK_CMND));
+void sendClickMessageToClients(){
+	// TODO fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client
+	// per fare ciò, devono tutti aspettare su una condition variable e qui si fa in modo che si svegliano
+	write(connfd, CLK_CMD, strlen(CLK_CMD));
+	// DOPO DI QUESTO DEVONO RIMETTERSI A DORMIRE
 }
 
 
@@ -41,7 +55,21 @@ int main(int argc, char* argv[]){
 
 	const int clickClients = inputClickClients > 2 ? inputClickClients : DEF_CLI_COUNT;
 
-	// TODO validazione e settaggio parametri
+	// TODO validazione e settaggio parametri, esempi sotto:
+	/*if(argc != 3){
+      fprintf(stderr, "usage: %s <ip_address> <port>\n", argv[0]);
+      return 1;
+    }
+    char *ipAddress = argv[1];
+    if(!isValidIpAddress(ipAddress)){
+      fprintf(stderr, "<ip_address> must be a valid IPv4 address.\n");
+      return 2;
+    }
+    uint16_t port;
+    if(stringToUint16(&port, argv[2]) < 0 || port <= 1023){
+      fprintf(stderr, "<port> must be a number between 1024 and 65535.\n");
+      return 3;
+    } */
 
 	char *localIp = (char*)malloc(16*sizeof(char));
 	memset(localIp, '\0', 16);
@@ -49,32 +77,44 @@ int main(int argc, char* argv[]){
 
 	int serverSockFD = setupServerSocket(MAX_PENDING_CLIENTS, localIp, PORT);
    
-	// TODO
-	// salva i connfd in una struttura dinamica, gestiscili in thread separati
-	// in ogni thread, PRIMA di restare in attesa per mandare i messaggi click, bisogna aspettare
-	// che tutti i client si siano connessi, e che per essi si sia salvato in una struttura
-	// il Round-trip time di tutti, e poi si setta in generale quello massimo.
-	// INFINE, in attesa di ricevere il messaggio che porta alla scrittura del click
+	bool allClientsConnected = false;
+	unsigned short connectedClients = 0;
+	unsigned long maxRTT = -1;
 
-	int *clientsFDs = (int*)malloc(clickClients*sizeof(int));
+	while(!allClientsConnected){
 
-	int connectedClients = 0;
-	while(connectedClients < clickClients){
 		struct sockaddr_in cli;
 		int len = sizeof(cli);
-		// Accept the data packet from client
-		int connfd = accept(serverSockFD, (struct sockaddr*)&cli, &len);
-		if(connfd < 0){
-			printf("server accept failed...\n");
-			exit(EXIT_FAILURE);
+		
+		int clientSockFd = accept(serverSockFD, (struct sockaddr*)&cli, &len);
+		if(clientSockFd < 0){
+			perror("socket accept failed for %s", cli.ipAddress), exit(EXIT_FAILURE);
 		}else
 			printf("server accept the client...\n");
+
+		unsigned long clientRTT = getSocketRTT(clientSockFd);
+		if(clientRTT > maxRTT) maxRTT = clientRTT;
+
+		ClientThreadArgs *args = malloc(sizeof(ClientThreadArgs));
+		args->clientSockFD = clientSockFD;
+		args->clientRTT = clientRTT;
+
+		// TODO appena entrato nella clientHandlerFunction comunicare il client rtt usando il messaggio "MY_RTT_CMD <rtt>"
+		pthread_t tid;
+		// handle the new client connection
+		pthread_create(&tid, NULL, clientHandlerFunction, (void *)args);
+		pthread_detach(tid);
+
+		++connectedClients;
+		if(connectedClients == clickClients) 
+			allClientsConnected = true;
 	}
 
-	
+	// TODO 1) sveglia i thread che stanno aspettando sulla condition variable legata ad allClientsConnected
+	// TODO 2) comunica ai client maxRTT (magari farla var globale?), usando il messaggio "MAX_RTT_CMD <rtt>"
+
 
 	// ############################################################################################
-
 
 	int pipefd[2];
 	pid_t currentPid;
@@ -90,15 +130,15 @@ int main(int argc, char* argv[]){
 		char userInput[BUF_SIZE];
 		while(true){
 			scanf("%s", userInput);
-			if(strcmp(userInput, EXT_CMND) == 0){
+			if(strcmp(userInput, EXT_CMD) == 0){
 				close(pipefd[1]);
 				break;
 			}
-			else if(strcmp(userInput, CLK_CMND) == 0){
+			else if(strcmp(userInput, CLK_CMD) == 0){
 				write(pipefd[1], userInput, strlen(userInput));
 			}
 			else {
-				write(STDOUT_FILENO, UNK_MSSG, strlen(UNK_MSSG));
+				printf("%s", UNK_MSSG);
 			}
 		}
 
@@ -107,15 +147,12 @@ int main(int argc, char* argv[]){
 
 	}else{ // I am the child
 
-		// TODO
-		// fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client
-
 		char fromParent[BUF_SIZE];
 		close(pipefd[1]); // close the write-end of the pipe, I'm not going to use it
 		int bytesRead;
 		while(bytesRead = read(pipefd[0], fromParent, BUF_SIZE) > 0){ // read while EOF
-			write(STDOUT_FILENO, "sending click to clients...\n", 28);
-			sendClickMessage(connfd);
+			printf("sending click to clients...\n");
+			sendClickMessageToClients(connfd);
 		}
 		close(serverSockFD);	// After ending close the server socket
 		close(pipefd[0]); // close the read-end of the pipe

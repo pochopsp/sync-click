@@ -17,8 +17,8 @@ int setupServerSocket(int pendingConnectionsQueueSize, char *ipAddress, uint16_t
 
     struct sockaddr_in serverAddress;
 
-	// TODO sostituire con una chiamata equivalente memset
-	bzero(&serverAddress, sizeof(serverAddress));
+	  // TODO sostituire con una chiamata equivalente memset
+	  bzero(&serverAddress, sizeof(serverAddress));
 
     serverAddress.sin_family = AF_INET;
     //our server socket listening port and ip
@@ -47,5 +47,14 @@ int setupServerSocket(int pendingConnectionsQueueSize, char *ipAddress, uint16_t
 }
 
 void getLocalMachineIp(char *ipOutput){
+  // TODO implementare
   strcpy(ipOutput, "0.0.0.0\0");
+}
+
+
+unsigned long getSocketRTT(int socketDescriptor){
+		struct tcp_info tcpInfo;
+		socklen_t tcpInfoSize = sizeof(ti);
+		getsockopt(fd, IPPROTO_TCP, TCP_INFO, &tcpInfo, &tcpInfoSize);
+		return tcpInfo.tcpi_rtt;
 }

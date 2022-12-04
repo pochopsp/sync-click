@@ -1,7 +1,8 @@
 #include <windows.h>
 #include <time.h>
 
-void waitForSeconds (unsigned int secs) {
+// TODO convertire in millisecondi / microsecondi o quello che manda il server
+void wait (unsigned int secs) {
     if(secs == 0) return;
     // Get finishing time.
     unsigned int retTime = time(0) + secs;
@@ -10,7 +11,7 @@ void waitForSeconds (unsigned int secs) {
 }
 
 void doDelayedLeftClick(unsigned int clickDelay){
-    waitForSeconds(clickDelay);
+    wait(clickDelay);
 
     INPUT events[2];
 

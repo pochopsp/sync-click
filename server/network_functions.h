@@ -1,5 +1,5 @@
-#ifndef NETWORK_FUNCTIONS.H
-#define NETWORK_FUNCTIONS.H
+#ifndef NETWORK_FUNCTIONS_H
+#define NETWORK_FUNCTIONS_H
 
 #include <netdb.h>
 
@@ -27,4 +27,4 @@ void getLocalMachineIp(char *ipOutput);
  */
 unsigned long getSocketRTT(int socketDescriptor);
 
-#endif
+#endif // NETWORK_FUNCTIONS_H

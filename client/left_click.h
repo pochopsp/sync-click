@@ -1,6 +1,7 @@
-#ifndef LEFT_CLICK_h
-#define LEFT_CLICK_h
+#ifndef LEFT_CLICK_H
+#define LEFT_CLICK_H
 
+// TODO aggiungere documentazione
 void doDelayedLeftClick(unsigned int clickDelay);
 
-#endif
+#endif // LEFT_CLICK_H

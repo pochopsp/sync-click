@@ -1,5 +1,5 @@
-#ifndef MACROS_h
-#define MACROS_h
+#ifndef MACROS_H
+#define MACROS_H
 
 // COMMANDS
 #define EXT_CMD "cicl"
@@ -10,4 +10,4 @@
 // NETWORK
 #define TCP_DEF_PORT 29900
 
-#endif
+#endif // MACROS_H

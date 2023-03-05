@@ -31,10 +31,10 @@ typedef ClientThreadArgs ClientThreadArgs;
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMND"' to send click message to clients or '"EXT_CMND"' to exit.\n"
-#define HLP_MSSG "Usage: %s [-p tcp_port] [-d click_clients_no]\n(default tcp_port is %d and default click_delay is %d)\n"
+#define HLP_MSSG "Usage: %s [-p tcp_port] [-d click_clients_no]\n(default tcp_port is %d and default click_clients_no is %d)\n"
 
 // NETWORK CONSTANTS
-#define MAX_PENDING_CLIENTS 
+#define MAX_PENDING_CLIENTS
 
 void sendClickMessageToClients(){
 	// TODO fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client

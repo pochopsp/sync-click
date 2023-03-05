@@ -78,7 +78,7 @@ void handleConnection(int sockFD){
 }
 
 void printHelp(char *programName){
-	char *helpMessage = "Usage: %s -a ip_address [-p tcp_port] [-h]"
+	char *helpMessage = "Usage: %s -a ip_address [-p tcp_port]"
 				"  \n  -a sets the given ip_address (ipv4 in dot notation) for the socket we want to connect to"
 				"  \n  -p sets the given tcp_port (from %d to %d, default is %d) for the socket we want to connect to"
 				"  \n  -h prints this help message";

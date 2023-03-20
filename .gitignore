@@ -11,8 +11,14 @@
 
 # ------ END ignore file without extension
 
-# igore .exe files
+# ignore .exe files
 *.exe
 
 # ignore .vscode dir
 .vscode
+
+# ignore .vscode dir
+.vscode
+
+# ignore all bin dirs at any level
+bin/

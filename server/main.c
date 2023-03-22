@@ -20,40 +20,40 @@
 
 //a structure we use to pass arguments to threads created for clients connections.
 struct ClientThreadArgs{
-	int clientSockFD;
+	int client_sock_fd;
     unsigned long clientRTT;
 }
-typedef ClientThreadArgs ClientThreadArgs;
+//typedef ClientThreadArgs ClientThreadArgs;
 
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
-#define DEF_CLI_COUNT 2
+#define DEF_CLIENT_COUNT 2
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMND"' to send click message to clients or '"EXT_CMND"' to exit.\n"
-#define HLP_MSSG "Usage: %s [-p tcp_port] [-d click_clients_no]\n(default tcp_port is %d and default click_clients_no is %d)\n"
+#define HLP_MSSG "Usage: %s [-p tcp_port] [-d clients_count]\n-when -p tcp_port is not specified, default port is %d\n-when -d clients_count is not specified, default clients count is %d\n"
 
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS
 
-void sendClickMessageToClients(){
+/* void sendClickMessageToClients(){
 	// TODO fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client
 	// per fare ciò, devono tutti aspettare su una condition variable e qui si fa in modo che si svegliano
-	write(connfd, CLK_CMD, strlen(CLK_CMD));
+	//write(connfd, CLK_CMD, strlen(CLK_CMD));
 	// DOPO DI QUESTO DEVONO RIMETTERSI A DORMIRE
-}
+} */
 
 
 int main(int argc, char* argv[]){
 
 	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
-		printf(HLP_MSSG, argv[0], TCP_DEF_PORT, DEF_CLI_COUNT);
+		printf(HLP_MSSG, argv[0], TCP_DEF_PORT, DEF_CLIENT_COUNT);
 		exit(EXIT_SUCCESS);
 	}
 	// TODO recuperare anche il numero di client che bisogna collegare
-	inputClickClients = -1;
+  	unsigned char input_clients_count = -1;
 
-	const int clickClients = inputClickClients > 2 ? inputClickClients : DEF_CLI_COUNT;
+	const unsigned char clients_count = input_clients_count > 2 ? input_clients_count : DEF_CLIENT_COUNT;
 
 	// TODO validazione e settaggio parametri, esempi sotto:
 	/*if(argc != 3){
@@ -71,43 +71,49 @@ int main(int argc, char* argv[]){
       return 3;
     } */
 
-	char *localIp = (char*)malloc(16*sizeof(char));
-	memset(localIp, '\0', 16);
-	getLocalMachineIp(localIp);
+	unsigned short input_tcp_port = -1;
 
-	int serverSockFD = setupServerSocket(MAX_PENDING_CLIENTS, localIp, PORT);
-   
-	bool allClientsConnected = false;
-	unsigned short connectedClients = 0;
-	unsigned long maxRTT = -1;
+	const unsigned short PORT = input_tcp_port != -1 ? input_tcp_port : TCP_DEF_PORT;
 
-	while(!allClientsConnected){
+	char *local_ip = (char*)malloc(16*sizeof(char));
+	memset(local_ip, '\0', 16);
+	get_local_machine_ip(local_ip);
+
+	//int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, PORT);
+   	int server_sock_fd = 1;
+
+	bool all_clients_connected = false;
+	unsigned char connected_clients = 0;
+	unsigned long max_rtt = -1;
+
+	while(!all_clients_connected){
 
 		struct sockaddr_in cli;
 		int len = sizeof(cli);
 		
-		int clientSockFd = accept(serverSockFD, (struct sockaddr*)&cli, &len);
-		if(clientSockFd < 0){
-			perror("socket accept failed for %s", cli.ipAddress), exit(EXIT_FAILURE);
+		int client_sock_fd = accept(server_sock_fd, (struct sockaddr*)&cli, &len);
+		if(client_sock_fd < 0){
+			//TODO recuperare ip del client
+			//perror("socket accept failed for %s", cli.ipAddress), exit(EXIT_FAILURE);
 		}else
 			printf("server accept the client...\n");
 
-		unsigned long clientRTT = getSocketRTT(clientSockFd);
-		if(clientRTT > maxRTT) maxRTT = clientRTT;
+		unsigned long client_rtt = get_socket_rtt(client_sock_fd);
+		if(client_rtt > max_rtt) max_rtt = client_rtt;
 
-		ClientThreadArgs *args = malloc(sizeof(ClientThreadArgs));
-		args->clientSockFD = clientSockFD;
-		args->clientRTT = clientRTT;
+		struct ClientThreadArgs *args = malloc(sizeof(struct ClientThreadArgs));
+		args->client_sock_fd = client_sock_fd;
+		args->clientRTT = client_rtt;
 
 		// TODO appena entrato nella clientHandlerFunction comunicare il client rtt usando il messaggio "MY_RTT_CMD <rtt>"
 		pthread_t tid;
 		// handle the new client connection
-		pthread_create(&tid, NULL, clientHandlerFunction, (void *)args);
+		//pthread_create(&tid, NULL, clientHandlerFunction, (void *)args);
 		pthread_detach(tid);
 
-		++connectedClients;
-		if(connectedClients == clickClients) 
-			allClientsConnected = true;
+		++connected_clients;
+		if(connected_clients == clients_count) 
+			all_clients_connected = true;
 	}
 
 	// TODO 1) sveglia i thread che stanno aspettando sulla condition variable legata ad allClientsConnected
@@ -152,9 +158,9 @@ int main(int argc, char* argv[]){
 		int bytesRead;
 		while(bytesRead = read(pipefd[0], fromParent, BUF_SIZE) > 0){ // read while EOF
 			printf("sending click to clients...\n");
-			sendClickMessageToClients(connfd);
+			//sendClickMessageToClients(connfd);
 		}
-		close(serverSockFD);	// After ending close the server socket
+		close(server_sock_fd);	// After ending close the server socket
 		close(pipefd[0]); // close the read-end of the pipe
 		exit(EXIT_SUCCESS);
 	}

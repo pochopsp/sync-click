@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-int setupServerSocket(int pendingConnectionsQueueSize, char *ipAddress, uint16_t port){
+int setup_server_socket(int pendingConnectionsQueueSize, char *ipAddress, uint16_t port){
 
     FILE *stdLogFile = stdout;
 
@@ -46,15 +46,16 @@ int setupServerSocket(int pendingConnectionsQueueSize, char *ipAddress, uint16_t
     return serverSD;
 }
 
-void getLocalMachineIp(char *ipOutput){
+void get_local_machine_ip(char *ipOutput){
   // TODO implementare
   strcpy(ipOutput, "0.0.0.0\0");
 }
 
 
-unsigned long getSocketRTT(int socketDescriptor){
-		struct tcp_info tcpInfo;
+unsigned long get_socket_rtt(int socketDescriptor){
+/* 		struct tcp_info tcpInfo;
 		socklen_t tcpInfoSize = sizeof(ti);
 		getsockopt(fd, IPPROTO_TCP, TCP_INFO, &tcpInfo, &tcpInfoSize);
-		return tcpInfo.tcpi_rtt;
+		return tcpInfo.tcpi_rtt; */
+    return 1;
 }

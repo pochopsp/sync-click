@@ -82,7 +82,7 @@ void printHelp(char *programName){
 				"  \n  -a sets the given ip_address (ipv4 in dot notation) for the socket we want to connect to"
 				"  \n  -p sets the given tcp_port (from %d to %d, default is %d) for the socket we want to connect to"
 				"  \n  -h prints this help message";
-	printf(helpMessage, programName, TCP_MIN_PORT, TCP_MAX_PORT, TCP_DEF_PORT);
+	printf(helpMessage, programName, TCP_MIN_PORT, TCP_MAX_PORT, DEF_TCP_PORT);
 }
 
 
@@ -112,7 +112,7 @@ setupSocketToServer(char *dottedIp, unsigned short port){
 	// assign IP, PORT
 	servaddr.sin_family = AF_INET;        
 	servaddr.sin_addr.s_addr = inet_addr(dottedIp);
-	servaddr.sin_port = htons(TCP_DEF_PORT);
+	servaddr.sin_port = htons(DEF_TCP_PORT);
 
 	// connect the client socket to server socket
 	if (connect(sockFD, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {
@@ -136,7 +136,7 @@ int main(int argc, char* argv[]){
 
 	initWindowsSocketLib();
 
-	unsigned short port = customPort == -1 ? TCP_DEF_PORT : customPort;
+	unsigned short port = customPort == -1 ? DEF_TCP_PORT : customPort;
 
 	int sockFD = setupSocketToServer(ip, port);
 	handleConnection(sockFD);

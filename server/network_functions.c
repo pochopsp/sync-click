@@ -11,7 +11,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
-int setup_server_socket(int pendingConnectionsQueueSize, char *ipAddress, uint16_t port){
+int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 
     FILE *stdLogFile = stdout;
 
@@ -23,7 +23,7 @@ int setup_server_socket(int pendingConnectionsQueueSize, char *ipAddress, uint16
     serverAddress.sin_family = AF_INET;
     //our server socket listening port and ip
     serverAddress.sin_port = htons(port);                       
-    serverAddress.sin_addr.s_addr = inet_addr(ipAddress);
+    serverAddress.sin_addr.s_addr = inet_addr(ip);
 
     int serverSD;
 
@@ -39,20 +39,20 @@ int setup_server_socket(int pendingConnectionsQueueSize, char *ipAddress, uint16
     fprintf(stdLogFile, "socket successfully binded...");
 
     // put socket in listen state
-    if (listen(serverSD, pendingConnectionsQueueSize) < 0)
+    if (listen(serverSD, max_pending_conn) < 0)
       perror("socket listen failed..."), exit(EXIT_FAILURE);
     fprintf(stdLogFile, "socket listening...");
 
     return serverSD;
 }
 
-void get_local_machine_ip(char *ipOutput){
+void local_machine_ip(char *ipOutput){
   // TODO implementare
   strcpy(ipOutput, "0.0.0.0\0");
 }
 
 
-unsigned long get_socket_rtt(int socketDescriptor){
+unsigned long socket_rtt(int socketDescriptor){
 /* 		struct tcp_info tcpInfo;
 		socklen_t tcpInfoSize = sizeof(ti);
 		getsockopt(fd, IPPROTO_TCP, TCP_INFO, &tcpInfo, &tcpInfoSize);

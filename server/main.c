@@ -22,19 +22,19 @@
 struct ClientThreadArgs{
 	int client_sock_fd;
     unsigned long clientRTT;
-}
-//typedef ClientThreadArgs ClientThreadArgs;
+};
+typedef ClientThreadArgs ClientThreadArgs;
 
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
 #define DEF_CLIENT_COUNT 2
 
 // MESSAGES
-#define UNK_MSSG "Unknown command. Use '"CLK_CMND"' to send click message to clients or '"EXT_CMND"' to exit.\n"
+#define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
 #define HLP_MSSG "Usage: %s [-p tcp_port] [-d clients_count]\n-when -p tcp_port is not specified, default port is %d\n-when -d clients_count is not specified, default clients count is %d\n"
 
 // NETWORK CONSTANTS
-#define MAX_PENDING_CLIENTS
+#define MAX_PENDING_CLIENTS 10
 
 /* void sendClickMessageToClients(){
 	// TODO fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client
@@ -47,7 +47,7 @@ struct ClientThreadArgs{
 int main(int argc, char* argv[]){
 
 	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
-		printf(HLP_MSSG, argv[0], TCP_DEF_PORT, DEF_CLIENT_COUNT);
+		printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
 		exit(EXIT_SUCCESS);
 	}
 	// TODO recuperare anche il numero di client che bisogna collegare
@@ -73,13 +73,13 @@ int main(int argc, char* argv[]){
 
 	unsigned short input_tcp_port = -1;
 
-	const unsigned short PORT = input_tcp_port != -1 ? input_tcp_port : TCP_DEF_PORT;
+	const unsigned short PORT = input_tcp_port != -1 ? input_tcp_port : DEF_TCP_PORT;
 
-	char *local_ip = (char*)malloc(16*sizeof(char));
+	char *local_ip = calloc(16, sizeof(char));
 	memset(local_ip, '\0', 16);
-	get_local_machine_ip(local_ip);
+	local_machine_ip(local_ip);
 
-	//int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, PORT);
+	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, PORT);
    	int server_sock_fd = 1;
 
 	bool all_clients_connected = false;
@@ -98,10 +98,10 @@ int main(int argc, char* argv[]){
 		}else
 			printf("server accept the client...\n");
 
-		unsigned long client_rtt = get_socket_rtt(client_sock_fd);
+		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;
 
-		struct ClientThreadArgs *args = malloc(sizeof(struct ClientThreadArgs));
+		ClientThreadArgs *args = malloc(sizeof(ClientThreadArgs));
 		args->client_sock_fd = client_sock_fd;
 		args->clientRTT = client_rtt;
 
@@ -123,25 +123,26 @@ int main(int argc, char* argv[]){
 	// ############################################################################################
 
 	int pipefd[2];
-	pid_t currentPid;
-
 	pipe(pipefd); // create the pipe
 
-	currentPid = fork(); // duplicate the current process
+	pid_t new_pid = fork(); // duplicate the current process
 
-	if(currentPid != 0){ // I am the parent
+	if(new_pid == -1)
+		perror("cannot create child process"), exit(EXIT_FAILURE);
+
+	if(new_pid != 0){ // I am the parent
 	
 		close(pipefd[0]); // close the read-end of the pipe, I'm not going to use it
 
-		char userInput[BUF_SIZE];
+		char user_input[BUF_SIZE];
 		while(true){
-			scanf("%s", userInput);
-			if(strcmp(userInput, EXT_CMD) == 0){
+			scanf("%s", user_input);
+			if(strcmp(user_input, EXT_CMD) == 0){
 				close(pipefd[1]);
 				break;
 			}
-			else if(strcmp(userInput, CLK_CMD) == 0){
-				write(pipefd[1], userInput, strlen(userInput));
+			else if(strcmp(user_input, CLK_CMD) == 0){
+				write(pipefd[1], user_input, strlen(user_input));
 			}
 			else {
 				printf("%s", UNK_MSSG);
@@ -153,10 +154,10 @@ int main(int argc, char* argv[]){
 
 	}else{ // I am the child
 
-		char fromParent[BUF_SIZE];
+		char from_parent[BUF_SIZE];
 		close(pipefd[1]); // close the write-end of the pipe, I'm not going to use it
-		int bytesRead;
-		while(bytesRead = read(pipefd[0], fromParent, BUF_SIZE) > 0){ // read while EOF
+		int bytes_read;
+		while(bytes_read = read(pipefd[0], from_parent, BUF_SIZE) > 0){ // read while EOF
 			printf("sending click to clients...\n");
 			//sendClickMessageToClients(connfd);
 		}

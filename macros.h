@@ -8,6 +8,6 @@
 #define MAX_RTT_CMD "max_rtt"
 
 // NETWORK
-#define TCP_DEF_PORT 29900
+#define DEF_TCP_PORT 29900
 
 #endif // MACROS_H

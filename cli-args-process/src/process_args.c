@@ -7,100 +7,96 @@
 
 #define ASCII_COUNT 128
 
-processed_argv process_arguments(const int argc, char * const * const argv, int optc, option * const optv){
+processed_argv process_arguments(const int argc, char * const * const argv, const int optc, option * const optv){
 	
-	// Map every option to its lambda[!]
-	lambda option_functions[ASCII_COUNT] = { NULL };
-	// // Map every option to its usage[!]
-	bool is_option_taken[ASCII_COUNT] = { false };
-	// Map every option that accepts argument[!]
+	// option to lambda
+	lambda option_lambdas[ASCII_COUNT] = { NULL };
+	// option to usage
+	bool option_taken[ASCII_COUNT] = { false };
+	// option to argument acceptance
 	bool accepts_argument[ASCII_COUNT] = { false };
-	// Map every option that requires argument[!]
+	// option to argument obligatoriness
 	bool mandatory_argument[ASCII_COUNT] = { false };
 
-	option *ptr = optv;
-	option *endPtr = optv + optc;
-	while(ptr < endPtr){
-		option_functions[ptr->option_key] = ptr->lambda;
-		accepts_argument[ptr->option_key] = ptr->accepts_arg;
-		mandatory_argument[ptr->option_key] = ptr->mandatory_arg;
-		ptr++;
+	for(int i = 0; i < optc; ++i){
+		option_lambdas[optv[i].option_key] = optv[i].lambda;
+		accepts_argument[optv[i].option_key] = optv[i].accepts_arg;
+		mandatory_argument[optv[i].option_key] = optv[i].mandatory_arg;
 	}
 	
-	// start from 1 to skip executable name
-	int argv_index = 1;
-
-	processed_argv processed_arguments = (processed_argv){ 
-		
+	processed_argv processed_args = (processed_argv){ 
 		// at least has to be optc
 		.options = calloc(optc, sizeof(option)),
 		.option_count = 0,
 
-		// at least has to be argc
-		.params = calloc(argc, sizeof(char*)),
+		// at least has to be argc-1
+		.params = calloc(argc-1, sizeof(char*)),
 		.param_count = 0
 	};
 
-	unsigned char latest_processed_option = 0;
+	unsigned char latest_opt = 0;
 	bool wait_for_argument = false;
+
+	// start from 1 to skip executable name
+	int argv_index = 1;
 
 	while(argv_index < argc){
 		char* token = argv[argv_index++];
 
+		// if it doesn't start with dash, it has to be either an option argument or a parameter
 		if(token[0] != '-'){
-			// if it doesn't start with dash, it has to be either a option argument or a parameter
 			if(wait_for_argument){
-				processed_arguments.options[processed_arguments.option_count++] = (option){.lambda = option_functions[latest_processed_option], .option_arg = token };
+				processed_args.options[processed_args.option_count++] = (option){ .lambda = option_lambdas[latest_opt], .option_arg = token };
 				wait_for_argument = false;
 			} else {
-				processed_arguments.params[processed_arguments.param_count++] = token;
+				processed_args.params[processed_args.param_count++] = token;
 			}
 			continue;
 		}
 
-		// here token starts with dash, so it has to be either an option or concatenated options within the same dash
+		// here token starts with dash, so it has to be either a single option or many options within the same dash
 		for(size_t token_index = 1; token_index < strlen(token); ++token_index){
 
 			if(wait_for_argument){
-				if(mandatory_argument[latest_processed_option]){
-					fprintf(stderr, "error: Illegal parameters were given to the program!\n");
+				if(mandatory_argument[latest_opt]){
+					fprintf(stderr, "error: Illegal arguments were given to the program!\n");
 					exit(ILLEGAL_OPTION);
 				}
-				processed_arguments.options[processed_arguments.option_count++] = (option){.lambda = option_functions[latest_processed_option], .option_arg = NULL };
+				processed_args.options[processed_args.option_count++] = (option){ .lambda = option_lambdas[latest_opt], .option_arg = NULL };
 				wait_for_argument = false;
 			}
 
 			const unsigned char option_key = token[token_index];				
-			if(!option_functions[option_key]){
+			if(!option_lambdas[option_key]){
 				fprintf(stderr, "error: Option %c does not exist!\n", option_key);
 				exit(UNKNOWN_OPTION);
 			}
 
 			// option with no arguments specified multiple times does not make sense
-			if(is_option_taken[option_key] && !accepts_argument[option_key]){
+			if(option_taken[option_key] && !accepts_argument[option_key]){
 				fprintf(stderr, "error: Option %c specified more than once!\n", option_key);
 				exit(ILLEGAL_OPTION);
 			}
 
-			is_option_taken[option_key] = true;
+			option_taken[option_key] = true;
 
 			if(accepts_argument[option_key]){
-				latest_processed_option = option_key;
+				latest_opt = option_key;
 				wait_for_argument = true;
 			} else {
-				processed_arguments.options[processed_arguments.option_count++] = (option){.lambda = option_functions[option_key], .option_arg = NULL };
+				processed_args.options[processed_args.option_count++] = (option){ .lambda = option_lambdas[option_key], .option_arg = NULL };
 			}
 		}
 	}
 
 	if(wait_for_argument){
-		if(mandatory_argument[latest_processed_option]){
-			fprintf(stderr, "error: Missing mandatory param for option %c!\n", latest_processed_option);
+		if(mandatory_argument[latest_opt]){
+			fprintf(stderr, "error: Missing mandatory param for option %c!\n", latest_opt);
 			exit(MISSING_ARGMNT);
 		} else {
-			processed_arguments.options[processed_arguments.option_count++] = (option){.lambda = option_functions[latest_processed_option], .option_arg = NULL};
+			processed_args.options[processed_args.option_count++] = (option){ .lambda = option_lambdas[latest_opt], .option_arg = NULL };
 		}
 	}
 
-	return processed_arguments;
+	return processed_args;
 }

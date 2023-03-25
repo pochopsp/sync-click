@@ -4,12 +4,7 @@
 #define ILLEGAL_OPTION 41
 #define MISSING_ARGMNT 42
 
-typedef struct _opts {
-	int threads;
-	// ...
-} opts;
-
-typedef void (*lambda)(opts*, char*);
+typedef void (*lambda)(void*, char*);
 
 typedef struct _option {
 	lambda lambda;
@@ -29,4 +24,4 @@ typedef struct _processed_argv {
 	unsigned char param_count;
 } processed_argv;
 
-processed_argv process_arguments(const int argc, char * const * const argv, int optc, option * const optv);
+processed_argv process_arguments(const int argc, char * const * const argv, const int optc, option * const optv);

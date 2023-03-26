@@ -2,6 +2,17 @@
 #include <stdlib.h>
 
 #include "src/process_args.h"
+// TODO citare nella sezione THANKS o DEPENDENCIES del README questa lib e metti la licenza MIT (perché Unity la usa)
+//https://github.com/ThrowTheSwitch/Unity
+#include "src/unity.h"
+
+void setUp(void) {
+    // not used, but impl needed by unity
+}
+
+void tearDown(void) {
+    // not used, but impl needed by unity
+}
 
 void option_a(void *param, char* _){
 	(void)param;
@@ -25,10 +36,11 @@ void option_t(void *param, char* option_argument){
 	printf("Hello from option_t with option_argument: %s!\n", option_argument);
 }
 
-int main(int argc, char** argv){
+void myTest(){
 
-	// TODO creare degli unit test con https://github.com/ThrowTheSwitch/Unity
-	// per testare lo status code riferirsi a https://www.appsloveworld.com/c/100/151/how-to-catch-a-call-to-exit-for-unit-testing
+	int argc = 7;
+	char **argv = (char *[]){"", "-a", "-b", "-c", "-t", "pecorella", "123"};
+
 	option *options = calloc(4, sizeof(option));
 
 	options[0] = (option){ .option_key = 'a', .accepts_arg = false, .mandatory_arg = false, .lambda = option_a };
@@ -42,13 +54,20 @@ int main(int argc, char** argv){
 		option curr_opt = processed_args.options[i];
 		curr_opt.lambda(NULL, curr_opt.option_arg);
 	}
+	
+	// TODO rimuovere stampe dalle lambda in modo da popolare parametri e verificarli con assert
+	TEST_ASSERT_EQUAL_STRING("123", processed_args.params[0]);
 
-	printf("Other parameters: \n");
-	for(unsigned char i = 0; i < processed_args.param_count; i++){
-		printf("%s\n", processed_args.params[i]);
-	}
-
+	// TODO verificare memory leak con valgrind
 	free(processed_args.options);
 	free(processed_args.params);
-	return 0;
+}
+
+int main(void) {
+    // TODO aggiungere vari casi di test
+	UNITY_BEGIN();
+
+    RUN_TEST(myTest);
+    
+	return UNITY_END();
 }

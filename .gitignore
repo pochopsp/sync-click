@@ -22,3 +22,6 @@
 
 # ignore all bin dirs at any level
 bin/
+
+# UN-ignore makefile
+!makefile

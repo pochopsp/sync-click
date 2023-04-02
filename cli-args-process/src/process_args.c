@@ -7,7 +7,7 @@
 
 #define ASCII_COUNT 128
 
-processed_argv process_arguments(const int argc, char * const * const argv, const int optc, option * const optv){
+processed_argv process_arguments(const int argc, char const * const * const argv, const int optc, option const * const optv){
 	
 	// option to lambda
 	lambda option_lambdas[ASCII_COUNT] = { NULL };

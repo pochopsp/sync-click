@@ -24,4 +24,4 @@ typedef struct _processed_argv {
 	unsigned char param_count;
 } processed_argv;
 
-processed_argv process_arguments(const int argc, char * const * const argv, const int optc, option * const optv);
+processed_argv process_arguments(const int argc, char const * const * const argv, const int optc, option const * const optv);

@@ -39,7 +39,7 @@ void option_t(void *param, char* option_argument){
 void myTest(){
 
 	int argc = 7;
-	char **argv = (char *[]){"", "-a", "-b", "-c", "-t", "pecorella", "123"};
+	char const * const * argv = (char const * const []){"", "-a", "-b", "-c", "-t", "pecorella", "123"};
 
 	option *options = calloc(4, sizeof(option));
 

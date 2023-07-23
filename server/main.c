@@ -31,7 +31,7 @@ typedef ClientThreadArgs ClientThreadArgs;
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
-#define HLP_MSSG "Usage: %s [-p tcp_port] [-d clients_count]\n-when -p tcp_port is not specified, default port is %d\n-when -d clients_count is not specified, default clients count is %d\n"
+#define HLP_MSSG "Usage: %s [-p tcp_port] [-c clients_count]\n-when -p tcp_port is not specified, default port is %d\n-when -c clients_count is not specified, default clients count is %d\n"
 
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10
@@ -44,8 +44,22 @@ typedef ClientThreadArgs ClientThreadArgs;
 } */
 
 
+typedef void (*lambda)(void *dest_option_arg, char *src_option_arg);
+	// option to lambda
+	lambda option_lambdas[ASCII_COUNT] = { NULL };
+	option_lambdas[optv[i].option_key]
+
+
 int main(int argc, char* argv[]){
 
+	// IO CHE SONO IL CHIAMANTE DI PROCESS ARGS.C, TENGO UNA MAPPA ASSOCIA AD OGNI OPTION KEY UNA LAMBDA DA ESEGUIRE, IN QUESTO MODO
+	// PROCESSO TUTTO CON PROCESS ARGS, ITERO SULLE OPTION CHE MI SONO STATE RESTUITE ED ESEGUO LE MIE LAMBDA.
+
+
+	// TODO usare getopts invece di lib custom
+
+
+	// gestire anche questa opzione mediante la lib fatta ???
 	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
 		printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
 		exit(EXIT_SUCCESS);
@@ -56,19 +70,14 @@ int main(int argc, char* argv[]){
 	const unsigned char clients_count = input_clients_count > 2 ? input_clients_count : DEF_CLIENT_COUNT;
 
 	// TODO validazione e settaggio parametri, esempi sotto:
-	/*if(argc != 3){
+	/*if(argc != 2){
       fprintf(stderr, "usage: %s <ip_address> <port>\n", argv[0]);
       return 1;
-    }
-    char *ipAddress = argv[1];
-    if(!isValidIpAddress(ipAddress)){
-      fprintf(stderr, "<ip_address> must be a valid IPv4 address.\n");
-      return 2;
     }
     uint16_t port;
     if(stringToUint16(&port, argv[2]) < 0 || port <= 1023){
       fprintf(stderr, "<port> must be a number between 1024 and 65535.\n");
-      return 3;
+      return 2;
     } */
 
 	unsigned short input_tcp_port = -1;

@@ -26,7 +26,7 @@
 
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)
 
-
+// TODO unit testing
 getRTTFromMessage(char *message){
 	char **splitMessage = splitString(message, ' ');
 
@@ -36,8 +36,7 @@ getRTTFromMessage(char *message){
 		// TODO qualcosa di meglio di atoi? necessario controllare errori?
 		retrievedRTT = atoi(*(splitMessage + 1));
 
-        int i;
-        for (i = 0; *(splitMessage + i); i++){
+        for (unsigned char i = 0; *(splitMessage + i); i++){
             free(*(splitMessage + i));
         }
         free(splitMessage);

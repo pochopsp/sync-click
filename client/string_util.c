@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+// TODO unit testing
 char** splitString(char* string, const char delim){
 
 	size_t delimCount = 0;

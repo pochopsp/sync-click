@@ -3,6 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
+#include <stdint.h>
+
 
 #include <netdb.h>
 #include <netinet/in.h>
@@ -31,6 +34,8 @@ typedef ClientThreadArgs ClientThreadArgs;
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
+
+// TODO adegua il messaggio per essere simile a quello del client
 #define HLP_MSSG "Usage: %s [-p tcp_port] [-c clients_count]\n-when -p tcp_port is not specified, default port is %d\n-when -c clients_count is not specified, default clients count is %d\n"
 
 // NETWORK CONSTANTS
@@ -44,45 +49,51 @@ typedef ClientThreadArgs ClientThreadArgs;
 } */
 
 
-typedef void (*lambda)(void *dest_option_arg, char *src_option_arg);
-	// option to lambda
-	lambda option_lambdas[ASCII_COUNT] = { NULL };
-	option_lambdas[optv[i].option_key]
-
-
 int main(int argc, char* argv[]){
 
-	// IO CHE SONO IL CHIAMANTE DI PROCESS ARGS.C, TENGO UNA MAPPA ASSOCIA AD OGNI OPTION KEY UNA LAMBDA DA ESEGUIRE, IN QUESTO MODO
-	// PROCESSO TUTTO CON PROCESS ARGS, ITERO SULLE OPTION CHE MI SONO STATE RESTUITE ED ESEGUO LE MIE LAMBDA.
+	uint16_t PORT = DEF_TCP_PORT;
+	unsigned char clients_count = DEF_CLIENT_COUNT;
 
+	int index;
 
-	// TODO usare getopts invece di lib custom
+	// si setta a zero per stampare messaggi d'errore custom?
+	opterr = 0;
 
+	// TODO controllare che il numero massimo di parametri in input?
 
-	// gestire anche questa opzione mediante la lib fatta ???
-	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
-		printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
-		exit(EXIT_SUCCESS);
+	while ((c = getopt(argc, argv, "hp:c:")) != -1){
+		switch (c) {
+			case 'h':
+				printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
+				exit(EXIT_SUCCESS);
+			case 'p':
+				// TODO implementare
+				// string_to_uint16(optarg);
+				/*if(string_to_uint16(&port, optarg) < 0 || port <= 1023){
+					fprintf(stderr, "<port> must be a number between 1024 and 65535.\n");
+					return 2;
+				}*/
+				PORT = optarg;
+				break;
+			case 'c':
+				// TODO fare check
+				clients_count = optarg;
+				break;
+			case '?':
+				if (optopt == 'c')
+					fprintf (stderr, "Option -%c requires an argument.\n", optopt);
+				else if (isprint (optopt))
+					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+				else
+					fprintf (stderr, Unknown option character `\\x%x'.\n", optopt);
+				return 1;
+			default:
+				abort ();
+		}
 	}
-	// TODO recuperare anche il numero di client che bisogna collegare
-  	unsigned char input_clients_count = -1;
 
-	const unsigned char clients_count = input_clients_count > 2 ? input_clients_count : DEF_CLIENT_COUNT;
-
-	// TODO validazione e settaggio parametri, esempi sotto:
-	/*if(argc != 2){
-      fprintf(stderr, "usage: %s <ip_address> <port>\n", argv[0]);
-      return 1;
-    }
-    uint16_t port;
-    if(stringToUint16(&port, argv[2]) < 0 || port <= 1023){
-      fprintf(stderr, "<port> must be a number between 1024 and 65535.\n");
-      return 2;
-    } */
-
-	unsigned short input_tcp_port = -1;
-
-	const unsigned short PORT = input_tcp_port != -1 ? input_tcp_port : DEF_TCP_PORT;
+	for (index = optind; index < argc; index++)
+		printf ("Non-option argument %s\n", argv[index]);
 
 	char *local_ip = calloc(16, sizeof(char));
 	memset(local_ip, '\0', 16);

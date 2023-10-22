@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <ctype.h>
 #include <stdint.h>
 
@@ -12,10 +13,12 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <pthread.h>
 
 
 #include "../macros.h"
 #include "./network_functions.h"
+#include "../common/string_functions.h"
 
 
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)
@@ -36,7 +39,7 @@ typedef ClientThreadArgs ClientThreadArgs;
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
 
 // TODO adegua il messaggio per essere simile a quello del client
-#define HLP_MSSG "Usage: %s [-p tcp_port] [-c clients_count]\n-when -p tcp_port is not specified, default port is %d\n-when -c clients_count is not specified, default clients count is %d\n"
+#define HLP_MSSG "Usage: %s [-p tcp_port] [-c clients_count]\n\twhen -p tcp_port is not specified, default port is %d\n\twhen -c clients_count is not specified, default clients count is %d\n"
 
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10
@@ -51,55 +54,48 @@ typedef ClientThreadArgs ClientThreadArgs;
 
 int main(int argc, char* argv[]){
 
-	uint16_t PORT = DEF_TCP_PORT;
-	unsigned char clients_count = DEF_CLIENT_COUNT;
+	uint16_t port = DEF_TCP_PORT;
+	uint8_t clients_count = DEF_CLIENT_COUNT;
+	
+	if(argc > 3){
+		printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
+		exit(EXIT_SUCCESS);
+	}
 
-	int index;
-
-	// si setta a zero per stampare messaggi d'errore custom?
-	opterr = 0;
-
-	// TODO controllare che il numero massimo di parametri in input?
-
+	int c;
 	while ((c = getopt(argc, argv, "hp:c:")) != -1){
 		switch (c) {
 			case 'h':
 				printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
 				exit(EXIT_SUCCESS);
 			case 'p':
-				// TODO implementare
-				// string_to_uint16(optarg);
-				/*if(string_to_uint16(&port, optarg) < 0 || port <= 1023){
-					fprintf(stderr, "<port> must be a number between 1024 and 65535.\n");
-					return 2;
-				}*/
-				PORT = optarg;
+				if(port < 1024 || port > 65535 || !string_to_uint16(optarg, &port)){
+					fprintf(stderr, "<tcp_port> must be a number between 1024 and 65535.\n");
+					return 1;
+				}
 				break;
 			case 'c':
-				// TODO fare check
-				clients_count = optarg;
+				if(port < 2 || port > 10 || !string_to_uint8(optarg, &clients_count)){
+					fprintf(stderr, "<clients_count> must be a number between 2 and 10.\n");
+					return 2;
+				}
 				break;
 			case '?':
-				if (optopt == 'c')
-					fprintf (stderr, "Option -%c requires an argument.\n", optopt);
-				else if (isprint (optopt))
+				if (isprint (optopt))
 					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
 				else
-					fprintf (stderr, Unknown option character `\\x%x'.\n", optopt);
-				return 1;
+					fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
+				return 3;
 			default:
 				abort ();
 		}
 	}
 
-	for (index = optind; index < argc; index++)
-		printf ("Non-option argument %s\n", argv[index]);
-
 	char *local_ip = calloc(16, sizeof(char));
 	memset(local_ip, '\0', 16);
 	local_machine_ip(local_ip);
 
-	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, PORT);
+	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);
    	int server_sock_fd = 1;
 
 	bool all_clients_connected = false;

@@ -64,13 +64,15 @@ int main(int argc, char* argv[]){
 				printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
 				exit(EXIT_SUCCESS);
 			case 'p':
-				if(port < 1024 || port > 65535 || !string_to_uint16(optarg, &port)){
+				bool conversion_ok = string_to_uint16(optarg, &port);
+				if(!conversion_ok || port < 1024){
 					fprintf(stderr, "<tcp_port> must be a number between 1024 and 65535.\n");
 					return 1;
 				}
 				break;
 			case 'c':
-				if(port < 2 || port > 10 || !string_to_uint8(optarg, &clients_count)){
+				bool conversion_ok = string_to_uint8(optarg, &clients_count);
+				if(!conversion_ok || (clients_count < 2 || clients_count > 10)){
 					fprintf(stderr, "<clients_count> must be a number between 2 and 10.\n");
 					return 2;
 				}

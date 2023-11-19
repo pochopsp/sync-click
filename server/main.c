@@ -19,6 +19,7 @@
 #include "../macros.h"
 #include "./network_functions.h"
 #include "../common/string_functions.h"
+#include "../common/network_constants.h"
 
 
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)
@@ -65,8 +66,8 @@ int main(int argc, char* argv[]){
 				exit(EXIT_SUCCESS);
 			case 'p':
 				bool conversion_ok = string_to_uint16(optarg, &port);
-				if(!conversion_ok || port < 1024){
-					fprintf(stderr, "<tcp_port> must be a number between 1024 and 65535.\n");
+				if(!conversion_ok || port < PORT_LWRBND_LIMIT){
+					fprintf(stderr, "<tcp_port> must be a number between %d and %d.\n", PORT_LWRBND_LIMIT, PORT_UPPBND_LIMIT);
 					return 1;
 				}
 				break;

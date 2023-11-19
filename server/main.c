@@ -35,6 +35,8 @@ typedef ClientThreadArgs ClientThreadArgs;
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
 #define DEF_CLIENT_COUNT 2
+#define MIN_CLIENT_COUNT 2
+#define MAX_CLIENT_COUNT 2
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
@@ -73,8 +75,8 @@ int main(int argc, char* argv[]){
 				break;
 			case 'c':
 				bool conversion_ok = string_to_uint8(optarg, &clients_count);
-				if(!conversion_ok || (clients_count < 2 || clients_count > 10)){
-					fprintf(stderr, "<clients_count> must be a number between 2 and 10.\n");
+				if(!conversion_ok || (clients_count < MIN_CLIENT_COUNT || clients_count > MAX_CLIENT_COUNT)){
+					fprintf(stderr, "<clients_count> must be a number between %d and %d.\n", MIN_CLIENT_COUNT, MAX_CLIENT_COUNT);
 					return 2;
 				}
 				break;

@@ -21,7 +21,7 @@ bool string_to_uint16(const char *string, uint16_t *res) {
 }
 
 bool string_to_uint8(const char *string, uint8_t *res) {
-    long val = strtol_with_limit(string, 0xFF);
+    long val = strtol_with_limit(string, 0x100);
     if(val == -1) return false;
     *res = (uint8_t)val;
     return true;

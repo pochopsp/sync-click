@@ -56,11 +56,6 @@ int main(int argc, char* argv[]){
 
 	uint16_t port = DEF_TCP_PORT;
 	uint8_t clients_count = DEF_CLIENT_COUNT;
-	
-	if(argc > 3){
-		printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
-		exit(EXIT_SUCCESS);
-	}
 
 	int c;
 	while ((c = getopt(argc, argv, "hp:c:")) != -1){

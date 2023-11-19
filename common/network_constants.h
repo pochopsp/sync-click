@@ -11,4 +11,8 @@ extern int PORT_LWRBND_LIMIT;
  */
 extern int PORT_UPPBND_LIMIT;
 
+/** @brief IPv4 length in dot notation
+ */
+extern int IPV4_DOTNTN_LENGTH;
+
 #endif // NETWORK_CONSTANTS_H

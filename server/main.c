@@ -91,7 +91,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	char *local_ip = calloc(16, sizeof(char));
+	char *local_ip = calloc(IPV4_DOTNTN_LENGTH+1, sizeof(char));
 	local_machine_ip(local_ip);
 
 	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);

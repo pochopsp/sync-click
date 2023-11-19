@@ -92,7 +92,6 @@ int main(int argc, char* argv[]){
 	}
 
 	char *local_ip = calloc(16, sizeof(char));
-	memset(local_ip, '\0', 16);
 	local_machine_ip(local_ip);
 
 	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);
@@ -106,7 +105,7 @@ int main(int argc, char* argv[]){
 
 		struct sockaddr_in cli;
 		int len = sizeof(cli);
-		
+
 		int client_sock_fd = accept(server_sock_fd, (struct sockaddr*)&cli, &len);
 		if(client_sock_fd < 0){
 			//TODO recuperare ip del client
@@ -128,7 +127,7 @@ int main(int argc, char* argv[]){
 		pthread_detach(tid);
 
 		++connected_clients;
-		if(connected_clients == clients_count) 
+		if(connected_clients == clients_count)
 			all_clients_connected = true;
 	}
 
@@ -147,7 +146,7 @@ int main(int argc, char* argv[]){
 		perror("cannot create child process"), exit(EXIT_FAILURE);
 
 	if(new_pid != 0){ // I am the parent
-	
+
 		close(pipefd[0]); // close the read-end of the pipe, I'm not going to use it
 
 		char user_input[BUF_SIZE];

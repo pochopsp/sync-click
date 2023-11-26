@@ -90,7 +90,10 @@ int main(int argc, char* argv[]){
 	}
 
 	char *local_ip = calloc(IPV4_DOTNTN_LENGTH+1, sizeof(char));
-	local_machine_ip(local_ip);
+	if(!get_interface_ip("wifi0", local_ip)){
+		fprintf(stderr, "Cannot retrieve local ip for interface wifi0.\n");
+		return 4;
+	}
 
 	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);
    	int server_sock_fd = 1;

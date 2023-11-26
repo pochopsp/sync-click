@@ -1,5 +1,6 @@
 #include "./network_functions.h"
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <sys/wait.h>
 #include <stdio.h>
@@ -7,6 +8,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#include <ifaddrs.h>
+#include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -22,7 +25,7 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 
     serverAddress.sin_family = AF_INET;
     //our server socket listening port and ip
-    serverAddress.sin_port = htons(port);                       
+    serverAddress.sin_port = htons(port);
     serverAddress.sin_addr.s_addr = inet_addr(ip);
 
     int serverSD;
@@ -46,11 +49,30 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
     return serverSD;
 }
 
-void local_machine_ip(char *ipOutput){
-  // TODO implementare
-  strcpy(ipOutput, "0.0.0.0\0");
-}
+bool get_interface_ip(char const * const interface_name, char * const ip_output){
+  // TODO testare
+  bool found = false;
 
+  struct ifaddrs *ifap, *ifa;
+  struct sockaddr_in *sa;
+  char *addr;
+
+  if(getifaddrs(&ifap) == -1) return false;
+
+  for (ifa = ifap; ifa; ifa = ifa->ifa_next) {
+    if (ifa->ifa_addr && ifa->ifa_addr->sa_family==AF_INET) {
+      sa = (struct sockaddr_in *) ifa->ifa_addr;
+      addr = inet_ntoa(sa->sin_addr);
+      if(strcmp(interface_name, ifa->ifa_name) == 0){
+        strcpy(ip_output, addr);
+        found = true;
+      }
+    }
+  }
+
+  freeifaddrs(ifap);
+  return found;
+}
 
 unsigned long socket_rtt(int socketDescriptor){
 /* 		struct tcp_info tcpInfo;

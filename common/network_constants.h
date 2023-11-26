@@ -11,7 +11,7 @@ extern int PORT_LWRBND_LIMIT;
  */
 extern int PORT_UPPBND_LIMIT;
 
-/** @brief IPv4 length in dot notation
+/** @brief IPv4 length in decimal dot notation
  */
 extern int IPV4_DOTNTN_LENGTH;
 

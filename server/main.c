@@ -67,15 +67,13 @@ int main(int argc, char* argv[]){
 				printf(HLP_MSSG, argv[0], DEF_TCP_PORT, DEF_CLIENT_COUNT);
 				exit(EXIT_SUCCESS);
 			case 'p':
-				bool conversion_ok = string_to_uint16(optarg, &port);
-				if(!conversion_ok || port < PORT_LWRBND_LIMIT){
+				if(!string_to_uint16(optarg, &port) || port < PORT_LWRBND_LIMIT){
 					fprintf(stderr, "<tcp_port> must be a number between %d and %d.\n", PORT_LWRBND_LIMIT, PORT_UPPBND_LIMIT);
 					return 1;
 				}
 				break;
 			case 'c':
-				bool conversion_ok = string_to_uint8(optarg, &clients_count);
-				if(!conversion_ok || (clients_count < MIN_CLIENT_COUNT || clients_count > MAX_CLIENT_COUNT)){
+				if(!string_to_uint8(optarg, &clients_count) || (clients_count < MIN_CLIENT_COUNT || clients_count > MAX_CLIENT_COUNT)){
 					fprintf(stderr, "<clients_count> must be a number between %d and %d.\n", MIN_CLIENT_COUNT, MAX_CLIENT_COUNT);
 					return 2;
 				}

@@ -20,8 +20,8 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 
     struct sockaddr_in server_address;
 
-	  // TODO sostituire con una chiamata equivalente memset
-	  bzero(&server_address, sizeof(server_address));
+	  // zeroing sockaddr_in struct
+	  memset(&server_address, 0, sizeof(struct sockaddr_in));
 
     server_address.sin_family = AF_INET;
     //our server socket listening port and ip

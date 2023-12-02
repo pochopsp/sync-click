@@ -30,9 +30,8 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 
     int server_sd;
 
-    // TODO sostituire 0 con IPPROTO_TCP
     //creating a tcp socket to listen for client requests
-    if ((server_sd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
+    if ((server_sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
       perror("socket creation failed..."), exit(EXIT_FAILURE);
     fprintf(std_log_file, "socket successfully created...");
 

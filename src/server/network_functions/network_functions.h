@@ -2,6 +2,7 @@
 #define NETWORK_FUNCTIONS_H
 
 #include <netdb.h>
+#include <stdbool.h>
 
 // TODO aggiungere documentazione
 int setup_server_socket(int max_pending_conn, char *ip, uint16_t port);

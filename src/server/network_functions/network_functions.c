@@ -1,6 +1,5 @@
 #include "./network_functions.h"
 
-#include <stdbool.h>
 #include <stdio.h>
 #include <sys/wait.h>
 #include <stdio.h>

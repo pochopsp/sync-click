@@ -16,37 +16,37 @@
 
 int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 
-    FILE *stdLogFile = stdout;
+    FILE *std_log_file = stdout;
 
-    struct sockaddr_in serverAddress;
+    struct sockaddr_in server_address;
 
 	  // TODO sostituire con una chiamata equivalente memset
-	  bzero(&serverAddress, sizeof(serverAddress));
+	  bzero(&server_address, sizeof(server_address));
 
-    serverAddress.sin_family = AF_INET;
+    server_address.sin_family = AF_INET;
     //our server socket listening port and ip
-    serverAddress.sin_port = htons(port);
-    serverAddress.sin_addr.s_addr = inet_addr(ip);
+    server_address.sin_port = htons(port);
+    server_address.sin_addr.s_addr = inet_addr(ip);
 
-    int serverSD;
+    int server_sd;
 
     // TODO sostituire 0 con IPPROTO_TCP
     //creating a tcp socket to listen for client requests
-    if ((serverSD = socket(PF_INET, SOCK_STREAM, 0)) < 0)
+    if ((server_sd = socket(PF_INET, SOCK_STREAM, 0)) < 0)
       perror("socket creation failed..."), exit(EXIT_FAILURE);
-    fprintf(stdLogFile, "socket successfully created...");
+    fprintf(std_log_file, "socket successfully created...");
 
     // bind socket to address
-    if (bind(serverSD, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0)
+    if (bind(server_sd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
       perror("socket bind failed..."), exit(EXIT_FAILURE);
-    fprintf(stdLogFile, "socket successfully binded...");
+    fprintf(std_log_file, "socket successfully binded...");
 
     // put socket in listen state
-    if (listen(serverSD, max_pending_conn) < 0)
+    if (listen(server_sd, max_pending_conn) < 0)
       perror("socket listen failed..."), exit(EXIT_FAILURE);
-    fprintf(stdLogFile, "socket listening...");
+    fprintf(std_log_file, "socket listening...");
 
-    return serverSD;
+    return server_sd;
 }
 
 bool get_interface_ip(char const * const interface_name, char * const ip_output){

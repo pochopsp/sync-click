@@ -97,7 +97,6 @@ int main(int argc, char* argv[]){
 	}
 
 	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);
-   	int server_sock_fd = 1;
 
 	bool all_clients_connected = false;
 	unsigned char connected_clients = 0;

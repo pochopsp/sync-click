@@ -48,7 +48,6 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 }
 
 bool get_interface_ip(char const * const interface_name, char * const ip_output){
-  // TODO testare
   bool found = false;
 
   struct ifaddrs *ifap, *ifa;

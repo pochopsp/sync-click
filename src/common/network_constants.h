@@ -15,4 +15,9 @@ extern const int PORT_UPPBND_LIMIT;
  */
 extern const int IPV4_DOTNTN_LENGTH;
 
+/** @brief Linux network interface name max length, see
+ * https://elixir.bootlin.com/linux/v5.6/source/include/uapi/linux/if.h#L33
+ */
+extern const int INTF_NAME_MAXLENGTH;
+
 #endif // NETWORK_CONSTANTS_H

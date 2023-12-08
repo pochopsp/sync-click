@@ -1,3 +1,4 @@
 const int PORT_LWRBND_LIMIT = 0xC000;
 const int PORT_UPPBND_LIMIT = 0xFFFF;
 const int IPV4_DOTNTN_LENGTH = 0xF;
+const int INTF_NAME_MAXLENGTH = 0x10;

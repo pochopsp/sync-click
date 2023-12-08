@@ -89,7 +89,7 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	char local_ip[16];
+	char local_ip[IPV4_DOTNTN_LENGTH+1];
 	// TODO get interface name from cli arguments
 	if(!get_interface_ip("wifi0", local_ip)){
 		fprintf(stderr, "Cannot retrieve local ip for interface wifi0.\n");

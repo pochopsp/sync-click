@@ -42,7 +42,7 @@ typedef ClientThreadArgs ClientThreadArgs;
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
 
 // TODO adegua il messaggio per essere simile a quello del client
-#define HLP_MSSG "Usage: %s [-p tcp_port] [-c clients_count]\n\twhen -p tcp_port is not specified, default port is %d\n\twhen -c clients_count is not specified, default clients count is %d\n"
+#define HLP_MSSG "Usage: %s interface_name [-p tcp_port] [-c clients_count]\n\twhen -p tcp_port is not specified, default port is %d\n\twhen -c clients_count is not specified, default clients count is %d\n"
 
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10
@@ -89,11 +89,22 @@ int main(int argc, char* argv[]){
 		}
 	}
 
-	char local_ip[IPV4_DOTNTN_LENGTH+1];
-	// TODO get interface name from cli arguments
-	if(!get_interface_ip("wifi0", local_ip)){
-		fprintf(stderr, "Cannot retrieve local ip for interface wifi0.\n");
+	if (argv[optind] == NULL) {
+		printf("Mandatory argument <interface_name> is missing.\n");
 		return 4;
+	}
+
+	if(strlen(argv[optind]) >= INTF_NAME_MAXLENGTH){
+		fprintf(stderr, "<interface_name> must be shorter than %d characters.\n", INTF_NAME_MAXLENGTH);
+		return 5;
+	}
+	char interface_name[INTF_NAME_MAXLENGTH];
+	strcpy(interface_name, optarg);
+
+	char local_ip[IPV4_DOTNTN_LENGTH+1];
+	if(!get_interface_ip(interface_name, local_ip)){
+		fprintf(stderr, "Cannot retrieve ip for interface %s.\n", interface_name);
+		return 6;
 	}
 
 	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);

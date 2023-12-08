@@ -41,8 +41,7 @@ typedef ClientThreadArgs ClientThreadArgs;
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
 
-// TODO adegua il messaggio per essere simile a quello del client
-#define HLP_MSSG "Usage: %s interface_name [-p tcp_port] [-c clients_count]\n\twhen -p tcp_port is not specified, default port is %d\n\twhen -c clients_count is not specified, default clients count is %d\n"
+#define HLP_MSSG "Usage: %s interface_name [-p tcp_port] [-c clients_count]\n\tinterface_name is the local network interface name where the server socket will be opened\n\t-p sets the given tcp_port (default is %d) for the server socket we want the clients to connect to\n\t-c sets the given clients_count (default is %d) as the number of clients that must connect before click events can be sent\n\t-h prints this help message and exit\n"
 
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10

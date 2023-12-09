@@ -18,7 +18,7 @@
 
 #include "../macros.h"
 #include "./network_functions/network_functions.h"
-#include "../common/string_functions.h"
+#include "../common/string_functions/string_functions.h"
 #include "../common/network_constants.h"
 
 

@@ -6,8 +6,10 @@
 #include <getopt.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <errno.h>
 
 
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -119,10 +121,10 @@ int main(int argc, char* argv[]){
 
 		int client_sock_fd = accept(server_sock_fd, (struct sockaddr*)&cli, &len);
 		if(client_sock_fd < 0){
-			//TODO recuperare ip del client
-			//perror("socket accept failed for %s", cli.ipAddress), exit(EXIT_FAILURE);
+			fprintf(stderr, "socket accept failed for %s: %s (errno = %d)\n", inet_ntoa(cli.sin_addr), strerror(errno), errno);
+			exit(EXIT_FAILURE);
 		}else
-			printf("server accept the client...\n");
+			printf("server accepted the client %s\n", inet_ntoa(cli.sin_addr));
 
 		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;

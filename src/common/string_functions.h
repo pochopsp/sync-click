@@ -7,8 +7,9 @@
 /** @brief Converts the number represented by string and
  *         puts it in the uint16_t pointed by res.
  *
- *  If the conversion was made successfully, true is returned and the number will be stored
- *  in the uint16_t pointer given in input. Otherwise, false is returned and the pointer will remain untouched.
+ *  If the conversion was made successfully (string represents a non-negative number within the bounds of uint16_t),
+ *  true is returned and the number will be stored in the uint16_t pointer given in input.
+ *  Otherwise, false is returned and the pointer will remain untouched.
  *
  *  @param res The pointer to the uint16_t to store the number into.
  *  @param string The pointer to the string to read the number from.
@@ -19,8 +20,9 @@ bool string_to_uint16(const char *string, uint16_t *res);
 /** @brief Converts the number represented by string and
  *         puts it in the uint8_t pointed by res.
  *
- *  If the conversion was made successfully, true is returned and the number will be stored
- *  in the uint8_t pointer given in input. Otherwise, false is returned and the pointer will remain untouched.
+ *  If the conversion was made successfully (string represents a non-negative number within the bounds of uint8_t),
+ *  true is returned and the number will be stored in the uint8_t pointer given in input.
+ *  Otherwise, false is returned and the pointer will remain untouched.
  *
  *  @param res The pointer to the uint8_t to store the number into.
  *  @param string The pointer to the string to read the number from.

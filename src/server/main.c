@@ -35,8 +35,8 @@ typedef ClientThreadArgs ClientThreadArgs;
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
 #define DEF_CLIENT_COUNT 2
-#define MIN_CLIENT_COUNT 2
-#define MAX_CLIENT_COUNT 2
+#define MIN_CLIENT_COUNT 1
+#define MAX_CLIENT_COUNT 10
 
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"

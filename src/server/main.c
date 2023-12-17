@@ -20,19 +20,12 @@
 
 #include "../macros.h"
 #include "./network_functions/network_functions.h"
+#include "./client_handling/client_handling.h"
 #include "../common/string_functions/string_functions.h"
 #include "../common/network_constants.h"
 
 
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)
-
-
-//a structure we use to pass arguments to threads created for clients connections.
-struct clientargs{
-	int client_sock_fd;
-    unsigned long client_rtt;
-};
-typedef clientargs clientargs;
 
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024

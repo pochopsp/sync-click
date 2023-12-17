@@ -28,11 +28,11 @@
 
 
 //a structure we use to pass arguments to threads created for clients connections.
-struct ClientThreadArgs{
+struct clientargs{
 	int client_sock_fd;
-    unsigned long clientRTT;
+    unsigned long client_rtt;
 };
-typedef ClientThreadArgs ClientThreadArgs;
+typedef clientargs clientargs;
 
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
@@ -129,9 +129,9 @@ int main(int argc, char* argv[]){
 		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;
 
-		ClientThreadArgs *args = malloc(sizeof(ClientThreadArgs));
+		clientargs *args = malloc(sizeof(clientargs));
 		args->client_sock_fd = client_sock_fd;
-		args->clientRTT = client_rtt;
+		args->client_rtt = client_rtt;
 
 		// TODO appena entrato nella clientHandlerFunction comunicare il client rtt usando il messaggio "MY_RTT_CMD <rtt>"
 		pthread_t tid;

@@ -24,7 +24,7 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port);
 bool get_interface_ip(char const * const interface_name, char * const ip_output);
 
 // TODO scrivere possibili errori, dettagli ecc, e verificare se millis o micros
-/** @brief Retrieves the Round Trip Time for the opened/accepted (?) socket
+/** @brief Retrieves the Round Trip Time for the opened socket
  *  specified by socket_descriptor.
  *
  *  @param socket_descriptor The descriptor of the socket we want to obtain RTT of.

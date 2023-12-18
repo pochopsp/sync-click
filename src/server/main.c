@@ -93,7 +93,7 @@ int main(int argc, char* argv[]){
 		return 5;
 	}
 	char interface_name[INTF_NAME_MAXLENGTH];
-	strcpy(interface_name, optarg);
+	strcpy(interface_name, argv[optind]);
 
 	char local_ip[IPV4_DOTNTN_LENGTH+1];
 	if(!get_interface_ip(interface_name, local_ip)){

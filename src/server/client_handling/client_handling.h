@@ -6,7 +6,6 @@ struct clientargs{
 	int client_sock_fd;
     unsigned long client_rtt;
 };
-typedef clientargs clientargs;
 
 //connected clients threads' start routine
 void* client_thread_handler(void *args);

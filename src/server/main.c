@@ -122,7 +122,7 @@ int main(int argc, char* argv[]){
 		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;
 
-		clientargs *args = malloc(sizeof(clientargs));
+		struct clientargs *args = malloc(sizeof(struct clientargs));
 		args->client_sock_fd = client_sock_fd;
 		args->client_rtt = client_rtt;
 

@@ -36,7 +36,7 @@
 // MESSAGES
 #define UNK_MSSG "Unknown command. Use '"CLK_CMD"' to send click message to clients or '"EXT_CMD"' to exit.\n"
 
-#define HLP_MSSG "Usage: %s interface_name [-p tcp_port] [-c clients_count]\n\tinterface_name is the name of the local network interface where the server socket will be opened\n\t-p sets the given tcp_port (default is %d) for the server socket we want the clients to connect to\n\t-c sets the given clients_count (default is %d) as the number of clients that must connect before click events can be sent\n\t-h prints this help message and exit\n"
+#define HLP_MSSG "Usage: %s interface_name [-p tcp_port] [-c clients_count]\n    interface_name is the network interface where the server socket will be opened\n    -p sets given tcp_port (default is %d) for the server socket\n    -c sets given clients_count (default is %d) as the number of clients that must connect before click events can be sent\n    -h prints this help message and exit\n"
 
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10

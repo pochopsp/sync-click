@@ -27,7 +27,7 @@
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)
 
 // TODO unit testing
-getRTTFromMessage(char *message){
+long getRTTFromMessage(char *message){
 	char **splitMessage = splitString(message, ' ');
 
 	int retrievedRTT = -1;
@@ -45,8 +45,8 @@ getRTTFromMessage(char *message){
 	return retrievedRTT;
 }
 
-int myRTT;
-int maxRTT;
+long myRTT;
+long maxRTT;
 
 void handleConnection(int sockFD){ 
 	int readBytes;
@@ -97,7 +97,7 @@ void cleanWindowsSocketLib(){
 	WSACleanup();
 }
 
-setupSocketToServer(char *dottedIp, unsigned short port){
+int setupSocketToServer(char *dottedIp, unsigned short port){
 	
 	struct sockaddr_in servaddr;
  

@@ -54,12 +54,12 @@ void handleConnection(int sockFD){
 
 	while ((readBytes = recv(sockFD, buff, BUF_SIZE, 0)) > 0) {
 		if ((strncmp(buff, MY_RTT_CMD, strlen(MY_RTT_CMD))) == 0) {
-			myRTT = getRTTfromMessage(buff);
+			myRTT = getRTTFromMessage(buff);
 			printf("setting my rtt of %d...\n", myRTT);
 			break;
 		}
 		if ((strncmp(buff, MAX_RTT_CMD, strlen(MAX_RTT_CMD))) == 0) {
-			maxRTT = getRTTfromMessage(buff);
+			maxRTT = getRTTFromMessage(buff);
 			printf("setting max rtt of %d...\n", maxRTT);
 			break;
 		}

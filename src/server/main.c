@@ -105,7 +105,8 @@ int main(int argc, char* argv[]){
 
 	bool all_clients_connected = false;
 	unsigned char connected_clients = 0;
-	unsigned long max_rtt = -1;
+	pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+	pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
 
 	printf("Waiting for all clients to be connected...\n\n");
 
@@ -134,6 +135,8 @@ int main(int argc, char* argv[]){
 		struct clientargs *args = malloc(sizeof(struct clientargs));
 		args->client_sock_fd = client_sock_fd;
 		args->client_rtt = client_rtt;
+		args->mutex = &mutex;
+		args->cond = &cond;
 
 		// TODO appena entrato nella clientHandlerFunction comunicare il client rtt usando il messaggio "MY_RTT_CMD <rtt>"
 		pthread_t tid;

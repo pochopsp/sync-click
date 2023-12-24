@@ -107,6 +107,12 @@ int main(int argc, char* argv[]){
 	unsigned char connected_clients = 0;
 	unsigned long max_rtt = -1;
 
+	printf("Waiting for all clients to be connected...\n\n");
+
+	char conn_clients_msg[256];
+	sprintf(conn_clients_msg, "%d/%d clients connected\n", connected_clients, clients_count);
+	write(1, conn_clients_msg, strlen(conn_clients_msg));
+
 	while(!all_clients_connected){
 
 		struct sockaddr_in cli;
@@ -116,8 +122,11 @@ int main(int argc, char* argv[]){
 		if(client_sock_fd < 0){
 			fprintf(stderr, "Socket accept failed for %s: %s (errno = %d)\n", inet_ntoa(cli.sin_addr), strerror(errno), errno);
 			exit(EXIT_FAILURE);
-		}else
-			printf("Server accepted the client %s\n", inet_ntoa(cli.sin_addr));
+		}else{
+			++connected_clients;
+			sprintf(conn_clients_msg, "%d/%d clients connected (accepted client %s)\n", connected_clients, clients_count, inet_ntoa(cli.sin_addr));
+			write(1, conn_clients_msg, strlen(conn_clients_msg));
+		}
 
 		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;
@@ -137,6 +146,7 @@ int main(int argc, char* argv[]){
 			all_clients_connected = true;
 	}
 
+	printf("\nSending MAX_RTT to all clients...\n\n");
 	// TODO 1) sveglia i thread che stanno aspettando sulla condition variable legata ad allClientsConnected
 	// TODO 2) comunica ai client maxRTT (magari farla var globale?), usando il messaggio "MAX_RTT_CMD <rtt>"
 

@@ -32,17 +32,17 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
     int server_sd;
     //creating a tcp socket to listen for client requests
     if ((server_sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
-      perror("Socket creation failed...\n"), exit(EXIT_FAILURE);
+      perror("Socket creation failed"), exit(EXIT_FAILURE);
     fprintf(std_log_file, "- Socket successfully created.\n");
 
     // bind socket to address
     if (bind(server_sd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
-      perror("Socket bind failed...\n"), exit(EXIT_FAILURE);
+      perror("Socket bind failed"), exit(EXIT_FAILURE);
     fprintf(std_log_file, "- Socket successfully binded.\n");
 
     // put socket in listen state
     if (listen(server_sd, max_pending_conn) < 0)
-      perror("Socket listen failed...\n"), exit(EXIT_FAILURE);
+      perror("Socket listen failed"), exit(EXIT_FAILURE);
     fprintf(std_log_file, "- Socket successfully listening.\n\n");
 
     return server_sd;

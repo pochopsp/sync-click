@@ -114,10 +114,10 @@ int main(int argc, char* argv[]){
 
 		int client_sock_fd = accept(server_sock_fd, (struct sockaddr*)&cli, &len);
 		if(client_sock_fd < 0){
-			fprintf(stderr, "socket accept failed for %s: %s (errno = %d)\n", inet_ntoa(cli.sin_addr), strerror(errno), errno);
+			fprintf(stderr, "Socket accept failed for %s: %s (errno = %d)\n", inet_ntoa(cli.sin_addr), strerror(errno), errno);
 			exit(EXIT_FAILURE);
 		}else
-			printf("server accepted the client %s\n", inet_ntoa(cli.sin_addr));
+			printf("Server accepted the client %s\n", inet_ntoa(cli.sin_addr));
 
 		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;

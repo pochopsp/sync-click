@@ -41,12 +41,6 @@
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10
 
-/* void sendClickMessageToClients(){
-	// TODO fai in modo che i thread ALLO STESSO MOMENTO, mandino il messaggio ai client
-	// per fare ciò, devono tutti aspettare su una condition variable e qui si fa in modo che si svegliano
-	//write(connfd, CLK_CMD, strlen(CLK_CMD));
-	// DOPO DI QUESTO DEVONO RIMETTERSI A DORMIRE
-} */
 
 
 int main(int argc, char* argv[]){
@@ -138,7 +132,6 @@ int main(int argc, char* argv[]){
 		args->mutex = &mutex;
 		args->cond = &cond;
 
-		// TODO appena entrato nella clientHandlerFunction comunicare il client rtt usando il messaggio "MY_RTT_CMD <rtt>"
 		pthread_t tid;
 		// handle the new client connection
 		pthread_create(&tid, NULL, client_thread_handler, (void *)args);

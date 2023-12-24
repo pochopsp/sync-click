@@ -1,12 +1,13 @@
 #include <winsock2.h>
-
+#include <ws2tcpip.h>
 #include <windows.h>
-#include <time.h>
+
 
 #include <stdio.h>
-
 #include <stdlib.h>
 #include <unistd.h>
+#include <time.h>
+#include <string.h>
 
 #include "./string_util.h"
 #include "./left_click.h"
@@ -48,7 +49,7 @@ long getRTTFromMessage(char *message){
 long myRTT;
 long maxRTT;
 
-void handleConnection(int sockFD){ 
+void handleConnection(SOCKET sockFD){
 	int readBytes;
 	char buff[BUF_SIZE];
 
@@ -83,39 +84,43 @@ void printHelp(char *programName){
 }
 
 
-void initWindowsSocketLib(){
-	static WSADATA wsaData;
-	int wsaerr = WSAStartup(MAKEWORD(2, 0), &wsaData);
-	if (wsaerr)
-	exit(EXIT_FAILURE);
-}
 
+SOCKET setupSocketToServer(char *dottedIp, unsigned short port){
 
-void cleanWindowsSocketLib(){
-	WSACleanup();
-}
-
-int setupSocketToServer(char *dottedIp, unsigned short port){
-	
+	int err;
 	struct sockaddr_in servaddr;
- 
+
 	// socket create and verification
-	int sockFD = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sockFD == -1) {
-		perror("socket creation failed...\n"), exit(EXIT_FAILURE);
+	SOCKET sockFD = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
+	if (sockFD == INVALID_SOCKET) {
+		err = WSAGetLastError();
+		fprintf(stderr, "socket() failed, error %d\n", err);
+		WSACleanup();
+		return -1;
 	}
 	printf("Socket successfully created..\n");
-	
+
 	// assign IP, PORT
-	servaddr.sin_family = AF_INET;        
+	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = inet_addr(dottedIp);
-	servaddr.sin_port = htons(DEF_TCP_PORT);
+	servaddr.sin_port = htons(port);
 
 	// connect the client socket to server socket
-	if (connect(sockFD, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {
-		perror("connection with the server failed...\n"), exit(EXIT_FAILURE);
+	if (WSAConnect(sockFD, (struct sockaddr*)&servaddr, sizeof(servaddr), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
+		err = WSAGetLastError();
+        fprintf(stderr, "connect() failed, error %d\n", err);
+        closesocket(sockFD);
+        WSACleanup();
+        return -1;
 	}
-	printf("connected to the server at ip=%s and port=%s\n", dottedIp, port);
+	char connected_msg[256] = "Connected to the server at ip ";
+	// TODO add port
+	strcat(connected_msg, dottedIp);
+	strcat(connected_msg, "\n");
+    write(1, connected_msg, strlen(connected_msg));
+
+	unsigned long mode = 0;
+	ioctlsocket(sockFD, FIONBIO, &mode);
 
 	return sockFD;
 }
@@ -131,16 +136,20 @@ int main(int argc, char* argv[]){
 	char *ip = "0.0.0.0"; // TODO recuperare i veri ip e porta
 	unsigned short customPort = -1;
 
-	initWindowsSocketLib();
+	static WSADATA wsaData;
+	int wsaerr = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	if (wsaerr) {
+		fprintf(stderr, "WSAStartup() failed, error %d\n", wsaerr);
+		return -1;
+    }
 
 	unsigned short port = customPort == -1 ? DEF_TCP_PORT : customPort;
 
 	int sockFD = setupSocketToServer(ip, port);
 	handleConnection(sockFD);
 
-	// close the socket
-	close(sockFD);
+	closesocket(sockFD);
+	WSACleanup();
 
-	cleanWindowsSocketLib();  
 	return 0;
 }

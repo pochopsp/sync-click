@@ -11,8 +11,9 @@
 
 # ------ END ignore file without extension
 
-# ignore .exe files
+# ignore executable files
 *.exe
+*.out
 
 # ignore .a files
 *.a

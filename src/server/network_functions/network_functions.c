@@ -10,6 +10,7 @@
 #include <ifaddrs.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <netinet/tcp.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 
@@ -72,10 +73,9 @@ bool get_interface_ip(char const * const interface_name, char * const ip_output)
   return found;
 }
 
-unsigned long socket_rtt(int socketDescriptor){
-/* 		struct tcp_info tcpInfo;
-		socklen_t tcpInfoSize = sizeof(ti);
-		getsockopt(fd, IPPROTO_TCP, TCP_INFO, &tcpInfo, &tcpInfoSize);
-		return tcpInfo.tcpi_rtt; */
-    return 1;
+unsigned long socket_rtt(int socket_descriptor){
+  struct tcp_info tcpinfo;
+  socklen_t tcpInfoSize = sizeof(tcpinfo);
+  getsockopt(socket_descriptor, IPPROTO_TCP, TCP_INFO, &tcpinfo, &tcpInfoSize);
+  return tcpinfo.tcpi_rtt;
 }

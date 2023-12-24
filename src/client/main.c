@@ -57,7 +57,7 @@ void handleConnection(int sockFD){
 			myRTT = getRTTFromMessage(buff);
 			printf("setting my rtt of %d...\n", myRTT);
 		}
-		if ((strncmp(buff, MAX_RTT_CMD, strlen(MAX_RTT_CMD))) == 0) {
+		else if ((strncmp(buff, MAX_RTT_CMD, strlen(MAX_RTT_CMD))) == 0) {
 			maxRTT = getRTTFromMessage(buff);
 			printf("setting max rtt of %d...\n", maxRTT);
 		}

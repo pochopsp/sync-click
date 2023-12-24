@@ -70,7 +70,7 @@ void handleConnection(int sockFD){
 			break;
 		}
 		else
-			printf("%s", UNK_MSSG);
+			printf("%s: %s\n", UNK_MSSG, buff);
 	}
 }
 

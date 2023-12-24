@@ -141,18 +141,20 @@ int main(int argc, char* argv[]){
 		// TODO appena entrato nella clientHandlerFunction comunicare il client rtt usando il messaggio "MY_RTT_CMD <rtt>"
 		pthread_t tid;
 		// handle the new client connection
-		//pthread_create(&tid, NULL, clientHandlerFunction, (void *)args);
+		pthread_create(&tid, NULL, client_thread_handler, (void *)args);
 		pthread_detach(tid);
 
-		++connected_clients;
-		if(connected_clients == clients_count)
+		if(connected_clients == clients_count){
 			all_clients_connected = true;
-	}
+			pthread_mutex_lock(&mutex);
+			time_to_send_maxrtt = true;
+			pthread_cond_broadcast(&cond);
+    		pthread_mutex_unlock(&mutex);
 
 	printf("\nSending MAX_RTT to all clients...\n\n");
-	// TODO 1) sveglia i thread che stanno aspettando sulla condition variable legata ad allClientsConnected
-	// TODO 2) comunica ai client maxRTT (magari farla var globale?), usando il messaggio "MAX_RTT_CMD <rtt>"
+		}
 
+	}
 
 	// ############################################################################################
 

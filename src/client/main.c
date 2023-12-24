@@ -21,7 +21,7 @@
 #define CLK_DELAY 0
 
 // MESSAGES
-#define UNK_MSSG "Unknown command received.\n"
+#define UNK_MSSG "Unknown command received"
 
 
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)

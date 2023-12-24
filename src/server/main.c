@@ -151,23 +151,14 @@ int main(int argc, char* argv[]){
 
 	// ############################################################################################
 
-	int pipefd[2];
-	pipe(pipefd); // create the pipe
+	printf("\nReady to receive commands from command line...\n\n");
 
-	pid_t new_pid = fork(); // duplicate the current process
-
-	if(new_pid == -1)
-		perror("cannot create child process"), exit(EXIT_FAILURE);
-
-	if(new_pid != 0){ // I am the parent
-
-		close(pipefd[0]); // close the read-end of the pipe, I'm not going to use it
 
 		char user_input[BUF_SIZE];
+
 		while(true){
 			scanf("%s", user_input);
 			if(strcmp(user_input, EXT_CMD) == 0){
-				close(pipefd[1]);
 				break;
 			}
 			else if(strcmp(user_input, CLK_CMD) == 0){
@@ -178,21 +169,5 @@ int main(int argc, char* argv[]){
 			}
 		}
 
-		wait(NULL); // wait for the child process to exit before I do the same
-		exit(EXIT_SUCCESS);
-
-	}else{ // I am the child
-
-		char from_parent[BUF_SIZE];
-		close(pipefd[1]); // close the write-end of the pipe, I'm not going to use it
-		int bytes_read;
-		while(bytes_read = read(pipefd[0], from_parent, BUF_SIZE) > 0){ // read while EOF
-			printf("sending click to clients...\n");
-			//sendClickMessageToClients(connfd);
-		}
-		close(server_sock_fd);	// After ending close the server socket
-		close(pipefd[0]); // close the read-end of the pipe
-		exit(EXIT_SUCCESS);
-	}
 	return 0;
 }

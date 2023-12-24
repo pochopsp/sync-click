@@ -144,7 +144,7 @@ int main(int argc, char* argv[]){
 			pthread_cond_broadcast(&cond);
     		pthread_mutex_unlock(&mutex);
 
-	printf("\nSending MAX_RTT to all clients...\n\n");
+			printf("\nSending MAX_RTT to all clients...\n\n");
 		}
 
 	}
@@ -154,20 +154,23 @@ int main(int argc, char* argv[]){
 	printf("\nReady to receive commands from command line...\n\n");
 
 
-		char user_input[BUF_SIZE];
+	char user_input[BUF_SIZE];
 
-		while(true){
-			scanf("%s", user_input);
-			if(strcmp(user_input, EXT_CMD) == 0){
-				break;
-			}
-			else if(strcmp(user_input, CLK_CMD) == 0){
-				write(pipefd[1], user_input, strlen(user_input));
-			}
-			else {
-				printf("%s", UNK_MSSG);
-			}
+	while(true){
+		scanf("%s", user_input);
+		if(strcmp(user_input, EXT_CMD) == 0){
+			break;
 		}
+		else if(strcmp(user_input, CLK_CMD) == 0){
+			printf("sending click to clients...\n");
+			pthread_mutex_lock(&mutex);
+			pthread_cond_broadcast(&cond);
+			pthread_mutex_unlock(&mutex);
+		}
+		else {
+			printf("%s", UNK_MSSG);
+		}
+	}
 
 	return 0;
 }

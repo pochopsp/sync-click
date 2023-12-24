@@ -56,12 +56,10 @@ void handleConnection(int sockFD){
 		if ((strncmp(buff, MY_RTT_CMD, strlen(MY_RTT_CMD))) == 0) {
 			myRTT = getRTTFromMessage(buff);
 			printf("setting my rtt of %d...\n", myRTT);
-			break;
 		}
 		if ((strncmp(buff, MAX_RTT_CMD, strlen(MAX_RTT_CMD))) == 0) {
 			maxRTT = getRTTFromMessage(buff);
 			printf("setting max rtt of %d...\n", maxRTT);
-			break;
 		}
 		else if ((strncmp(buff, CLK_CMD, strlen(CLK_CMD))) == 0) {
 			doDelayedLeftClick(0);

@@ -12,4 +12,13 @@ This project creates a client-server architecture with TCP sockets in which the 
 
 # Build
 
-*TODO*
+### Server
+To build the server executable just type the following command on console:
+
+	make server
+
+### Client
+To build the client executable just type the following command on console:
+
+	make client
+ 

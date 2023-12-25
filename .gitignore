@@ -21,9 +21,6 @@
 # ignore .vscode dir
 .vscode
 
-# ignore .vscode dir
-.vscode
-
 # ignore all bin dirs at any level
 bin/
 

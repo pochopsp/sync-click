@@ -44,7 +44,7 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
     // put socket in listen state
     if (listen(server_sd, max_pending_conn) < 0)
       perror("Socket listen failed"), exit(EXIT_FAILURE);
-    fprintf(std_log_file, "- Socket successfully listening.\n\n");
+    fprintf(std_log_file, "- Socket listening at ip %s and port %u.\n\n", ip, (unsigned int)port);
 
     return server_sd;
 }

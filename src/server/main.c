@@ -159,6 +159,7 @@ int main(int argc, char* argv[]){
 	while(true){
 		scanf("%s", user_input);
 		if(strcmp(user_input, EXT_CMD) == 0){
+			printf("EXT_CMD received, exiting...\n");
 			break;
 		}
 		else if(strcmp(user_input, CLK_CMD) == 0){

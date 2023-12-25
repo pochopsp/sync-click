@@ -30,4 +30,4 @@ To build the server executable just type the following command on console:
 ### Client
 To build the client executable just type the following command on console:
 
-	make client
+	gmake client

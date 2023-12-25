@@ -13,7 +13,7 @@ This project creates a client-server architecture with TCP sockets in which the 
 # Prerequisites
 Make sure you have all of the following on your machine:
 ### Server
-- POSIX-certified / POSIX-compliant OS (see https://en.wikipedia.org/wiki/POSIX#POSIX-oriented_operating_systems)
+- POSIX-certified / POSIX-compliant OS (see [wikipedia POSIX operating systems](https://en.wikipedia.org/wiki/POSIX#POSIX-oriented_operating_systems))
 - GNU Make (tested on 4.3)
 - gcc (tested on 10.2.1)
 ### Client

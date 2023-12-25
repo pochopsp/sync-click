@@ -163,7 +163,7 @@ int main(int argc, char* argv[]){
 			break;
 		}
 		else if(strcmp(user_input, CLK_CMD) == 0){
-			printf("sending click to clients...\n");
+			printf("CLK_CMD received, sending click to clients...\n");
 			pthread_mutex_lock(&mutex);
 			pthread_cond_broadcast(&cond);
 			pthread_mutex_unlock(&mutex);

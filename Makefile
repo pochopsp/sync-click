@@ -3,3 +3,6 @@ server:
 
 client:
 	gcc -o client src/client/main.c src/client/left_click.c src/client/string_util.c -lws2_32
+
+clean:
+	$(RM) server client.exe

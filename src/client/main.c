@@ -5,13 +5,17 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
+#include <getopt.h>
 #include <time.h>
 #include <string.h>
 
 #include "./string_util.h"
 #include "./left_click.h"
 #include "../macros.h"
+#include "../common/string_functions/string_functions.h"
+#include "../common/network_constants.h"
 
 // NETWORK CONSTANTS
 #define TCP_MIN_PORT 1025
@@ -76,13 +80,12 @@ void handle_connection(SOCKET sockfd){
 }
 
 void printhelp(char *program_name){
-	char *help_msg = "Usage: %s -a ip_address [-p tcp_port]"
-				"  \n  -a sets the given ip_address (ipv4 in dot notation) for the socket we want to connect to"
-				"  \n  -p sets the given tcp_port (from %d to %d, default is %d) for the socket we want to connect to"
+	char *help_msg = "Usage: %s ip_address [-p tcp_port]"
+				"  \n  ip_address is the ip (ipv4 in dot notation) for the server socket we want to connect to"
+				"  \n  -p sets the given tcp_port (default is %d) for the server socket we want to connect to"
 				"  \n  -h prints this help message and exit";
-	printf(help_msg, program_name, TCP_MIN_PORT, TCP_MAX_PORT, DEF_TCP_PORT);
+	printf(help_msg, program_name, DEF_TCP_PORT);
 }
-
 
 
 SOCKET setup_socket_to_server(char *dotted_ip, unsigned short port){
@@ -121,16 +124,57 @@ SOCKET setup_socket_to_server(char *dotted_ip, unsigned short port){
 	return sockfd;
 }
 
+// TODO refactor and delete it
+bool in_0_and_255(int num){
+	return num >= 0 && num <= 255;
+}
+
+// TODO unit test
+bool valid_ipv4(const char *ipv4){
+   int a, b, c, d;
+   int matched = sscanf(ipv4,"%d.%d.%d.%d", &a, &b, &c, &d);
+   return matched == 4 && in_0_and_255(a) && in_0_and_255(b) && in_0_and_255(c) && in_0_and_255(d);
+}
+
+
 int main(int argc, char* argv[]){
 
-	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
-		printhelp(argv[0]);
-		exit(EXIT_SUCCESS);
-	}
-	// TODO parte di controllo argc, validazione e settaggio dell'input
+	uint16_t port = DEF_TCP_PORT;
 
-	char *ip = "0.0.0.0"; // TODO recuperare i veri ip e porta
-	unsigned short custom_port = -1;
+	int c;
+	while ((c = getopt(argc, argv, "hp:")) != -1){
+		switch (c) {
+			case 'h':
+				printhelp(argv[0]);
+				exit(EXIT_SUCCESS);
+			case 'p':
+				if(!string_to_uint16(optarg, &port) || port < PORT_LWRBND_LIMIT){
+					fprintf(stderr, "<tcp_port> must be a number between %d and %d.\n", PORT_LWRBND_LIMIT, PORT_UPPBND_LIMIT);
+					return 1;
+				}
+				break;
+			case '?':
+				if (isprint (optopt))
+					fprintf (stderr, "Unknown option `-%c'.\n", optopt);
+				else
+					fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
+				return 3;
+			default:
+				abort ();
+		}
+	}
+
+	if (argv[optind] == NULL) {
+		printf("Mandatory argument <ip_address> is missing.\n");
+		return 4;
+	}
+	if(!valid_ipv4(argv[optind])){
+		fprintf(stderr, "<ip_address> must be a valid ipv4 address expressed in dot notation.\n");
+		return 5;
+	}
+
+	char ip[IPV4_DOTNTN_LENGTH+1];
+	strcpy(ip, argv[optind]);
 
 	static WSADATA wsadata;
 	int wsaerr = WSAStartup(MAKEWORD(2, 2), &wsadata);
@@ -138,8 +182,6 @@ int main(int argc, char* argv[]){
 		fprintf(stderr, "WSAStartup() failed, error %d\n", wsaerr);
 		return -1;
     }
-
-	unsigned short port = custom_port == -1 ? DEF_TCP_PORT : custom_port;
 
 	int sockfd = setup_socket_to_server(ip, port);
 	handle_connection(sockfd);

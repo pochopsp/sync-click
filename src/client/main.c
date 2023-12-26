@@ -28,42 +28,42 @@
 // TODO implementare gestione segnali da terminale (ctrl+c ecc)
 
 // TODO unit testing
-long getRTTFromMessage(char *message){
-	char **splitMessage = splitString(message, ' ');
+long get_rtt_from_message(char *message){
+	char **split_message = splitString(message, ' ');
 
-	int retrievedRTT = -1;
+	int retrieved_rtt = -1;
 
-    if (splitMessage){
+    if (split_message){
 		// TODO qualcosa di meglio di atoi? necessario controllare errori?
-		retrievedRTT = atoi(*(splitMessage + 1));
+		retrieved_rtt = atoi(*(split_message + 1));
 
-        for (unsigned char i = 0; *(splitMessage + i); i++){
-            free(*(splitMessage + i));
+        for (unsigned char i = 0; *(split_message + i); i++){
+            free(*(split_message + i));
         }
-        free(splitMessage);
+        free(split_message);
     }
 
-	return retrievedRTT;
+	return retrieved_rtt;
 }
 
-long myRTT;
-long maxRTT;
+long my_rtt;
+long max_rtt;
 
-void handleConnection(SOCKET sockFD){
+void handle_connection(SOCKET sockfd){
 	int readBytes;
 	char buff[BUF_SIZE];
 
-	while ((readBytes = recv(sockFD, buff, BUF_SIZE, 0)) > 0) {
+	while ((readBytes = recv(sockfd, buff, BUF_SIZE, 0)) > 0) {
 		if ((strncmp(buff, MY_RTT_CMD, strlen(MY_RTT_CMD))) == 0) {
-			myRTT = getRTTFromMessage(buff);
-			printf("setting my rtt of %d...\n", myRTT);
+			my_rtt = get_rtt_from_message(buff);
+			printf("setting my rtt of %d...\n", my_rtt);
 		}
 		else if ((strncmp(buff, MAX_RTT_CMD, strlen(MAX_RTT_CMD))) == 0) {
-			maxRTT = getRTTFromMessage(buff);
-			printf("setting max rtt of %d...\n", maxRTT);
+			max_rtt = get_rtt_from_message(buff);
+			printf("setting max rtt of %d...\n", max_rtt);
 		}
 		else if ((strncmp(buff, CLK_CMD, strlen(CLK_CMD))) == 0) {
-			doDelayedLeftClick(maxRTT - myRTT);
+			doDelayedLeftClick(max_rtt - my_rtt);
 			printf("click received!\n");
 		}
 		else if ((strncmp(buff, EXT_CMD, strlen(EXT_CMD))) == 0) {
@@ -75,24 +75,24 @@ void handleConnection(SOCKET sockFD){
 	}
 }
 
-void printHelp(char *programName){
-	char *helpMessage = "Usage: %s -a ip_address [-p tcp_port]"
+void printhelp(char *program_name){
+	char *help_msg = "Usage: %s -a ip_address [-p tcp_port]"
 				"  \n  -a sets the given ip_address (ipv4 in dot notation) for the socket we want to connect to"
 				"  \n  -p sets the given tcp_port (from %d to %d, default is %d) for the socket we want to connect to"
 				"  \n  -h prints this help message and exit";
-	printf(helpMessage, programName, TCP_MIN_PORT, TCP_MAX_PORT, DEF_TCP_PORT);
+	printf(help_msg, program_name, TCP_MIN_PORT, TCP_MAX_PORT, DEF_TCP_PORT);
 }
 
 
 
-SOCKET setupSocketToServer(char *dottedIp, unsigned short port){
+SOCKET setup_socket_to_server(char *dotted_ip, unsigned short port){
 
 	int err;
 	struct sockaddr_in servaddr;
 
 	// socket create and verification
-	SOCKET sockFD = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
-	if (sockFD == INVALID_SOCKET) {
+	SOCKET sockfd = WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, 0, 0);
+	if (sockfd == INVALID_SOCKET) {
 		err = WSAGetLastError();
 		fprintf(stderr, "socket() failed, error %d\n", err);
 		WSACleanup();
@@ -102,49 +102,49 @@ SOCKET setupSocketToServer(char *dottedIp, unsigned short port){
 
 	// assign IP, PORT
 	servaddr.sin_family = AF_INET;
-	servaddr.sin_addr.s_addr = inet_addr(dottedIp);
+	servaddr.sin_addr.s_addr = inet_addr(dotted_ip);
 	servaddr.sin_port = htons(port);
 
 	// connect the client socket to server socket
-	if (WSAConnect(sockFD, (struct sockaddr*)&servaddr, sizeof(servaddr), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
+	if (WSAConnect(sockfd, (struct sockaddr*)&servaddr, sizeof(servaddr), NULL, NULL, NULL, NULL) == SOCKET_ERROR) {
 		err = WSAGetLastError();
         fprintf(stderr, "connect() failed, error %d\n", err);
-        closesocket(sockFD);
+        closesocket(sockfd);
         WSACleanup();
         return -1;
 	}
-    printf("Connected to the server at ip %s and port %hu.\n", dottedIp, port);
+    printf("Connected to the server at ip %s and port %hu.\n", dotted_ip, port);
 
 	unsigned long mode = 0;
-	ioctlsocket(sockFD, FIONBIO, &mode);
+	ioctlsocket(sockfd, FIONBIO, &mode);
 
-	return sockFD;
+	return sockfd;
 }
 
 int main(int argc, char* argv[]){
 
 	if(argc == 2 && (strcmp(argv[1], "-h")==0)){
-		printHelp(argv[0]);
+		printhelp(argv[0]);
 		exit(EXIT_SUCCESS);
 	}
 	// TODO parte di controllo argc, validazione e settaggio dell'input
 
 	char *ip = "0.0.0.0"; // TODO recuperare i veri ip e porta
-	unsigned short customPort = -1;
+	unsigned short custom_port = -1;
 
-	static WSADATA wsaData;
-	int wsaerr = WSAStartup(MAKEWORD(2, 2), &wsaData);
+	static WSADATA wsadata;
+	int wsaerr = WSAStartup(MAKEWORD(2, 2), &wsadata);
 	if (wsaerr) {
 		fprintf(stderr, "WSAStartup() failed, error %d\n", wsaerr);
 		return -1;
     }
 
-	unsigned short port = customPort == -1 ? DEF_TCP_PORT : customPort;
+	unsigned short port = custom_port == -1 ? DEF_TCP_PORT : custom_port;
 
-	int sockFD = setupSocketToServer(ip, port);
-	handleConnection(sockFD);
+	int sockfd = setup_socket_to_server(ip, port);
+	handle_connection(sockfd);
 
-	closesocket(sockFD);
+	closesocket(sockfd);
 	WSACleanup();
 
 	return 0;

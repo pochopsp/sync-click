@@ -63,7 +63,7 @@ void handleConnection(SOCKET sockFD){
 			printf("setting max rtt of %d...\n", maxRTT);
 		}
 		else if ((strncmp(buff, CLK_CMD, strlen(CLK_CMD))) == 0) {
-			doDelayedLeftClick(0);
+			doDelayedLeftClick(maxRTT - myRTT);
 			printf("click received!\n");
 		}
 		else if ((strncmp(buff, EXT_CMD, strlen(EXT_CMD))) == 0) {

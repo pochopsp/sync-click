@@ -5,7 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
+
 #include <time.h>
 #include <string.h>
 
@@ -113,11 +113,7 @@ SOCKET setupSocketToServer(char *dottedIp, unsigned short port){
         WSACleanup();
         return -1;
 	}
-	char connected_msg[256] = "Connected to the server at ip ";
-	// TODO add port
-	strcat(connected_msg, dottedIp);
-	strcat(connected_msg, "\n");
-    write(1, connected_msg, strlen(connected_msg));
+    printf("Connected to the server at ip %s and port %hu.\n", dottedIp, port);
 
 	unsigned long mode = 0;
 	ioctlsocket(sockFD, FIONBIO, &mode);

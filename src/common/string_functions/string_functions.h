@@ -1,7 +1,7 @@
 #ifndef STRING_FUNCTIONS_H
 #define STRING_FUNCTIONS_H
 
-#include <netdb.h>
+#include <stdint.h>
 #include <stdbool.h>
 
 /** @brief Converts the number represented by string and

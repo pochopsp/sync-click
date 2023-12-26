@@ -1,5 +1,5 @@
 #include <stdbool.h>
-#include <netdb.h>
+#include <stdint.h>
 #include <errno.h>
 #include <stdlib.h>
 

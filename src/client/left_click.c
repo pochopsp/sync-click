@@ -1,17 +1,9 @@
 #include <windows.h>
-#include <time.h>
+#include "usleep.h"
 
-// TODO convertire in millisecondi / microsecondi o quello che manda il server
-void wait (unsigned int secs) {
-    if(secs == 0) return;
-    // Get finishing time.
-    unsigned int retTime = time(0) + secs;
-    // Loop until it arrives.
-    while (time(0) < retTime);
-}
 
 void doDelayedLeftClick(unsigned int clickDelay){
-    wait(clickDelay);
+    usleep(clickDelay);
 
     INPUT events[2];
 

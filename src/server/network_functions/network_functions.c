@@ -28,7 +28,7 @@ int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
   fprintf(std_log_file, "Starting socket setup:\n");
 
   int server_sd;
-  if ((server_sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
+  if ((server_sd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
     perror("Socket creation failed"), exit(EXIT_FAILURE);
   fprintf(std_log_file, "- Socket successfully created.\n");
 

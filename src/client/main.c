@@ -60,15 +60,15 @@ void handle_connection(SOCKET sockfd){
 	while ((readBytes = recv(sockfd, buff, BUF_SIZE, 0)) > 0) {
 		if ((strncmp(buff, MY_RTT_CMD, strlen(MY_RTT_CMD))) == 0) {
 			my_rtt = get_rtt_from_message(buff);
-			printf("setting my rtt of %d...\n", my_rtt);
+			printf("Setting my rtt of %d...\n", my_rtt);
 		}
 		else if ((strncmp(buff, MAX_RTT_CMD, strlen(MAX_RTT_CMD))) == 0) {
 			max_rtt = get_rtt_from_message(buff);
-			printf("setting max rtt of %d...\n", max_rtt);
+			printf("Setting max rtt of %d...\n", max_rtt);
 		}
 		else if ((strncmp(buff, CLK_CMD, strlen(CLK_CMD))) == 0) {
 			doDelayedLeftClick(max_rtt - my_rtt);
-			printf("click received!\n");
+			printf("Click received!\n");
 		}
 		else if ((strncmp(buff, EXT_CMD, strlen(EXT_CMD))) == 0) {
 			printf("client exit...\n");

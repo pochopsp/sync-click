@@ -16,37 +16,31 @@
 
 int setup_server_socket(int max_pending_conn, char *ip, uint16_t port){
 
-    FILE *std_log_file = stdout;
+  FILE *std_log_file = stdout;
 
-    struct sockaddr_in server_address;
+  struct sockaddr_in server_address;
+  memset(&server_address, 0, sizeof(struct sockaddr_in));
 
-	  // zeroing sockaddr_in struct
-	  memset(&server_address, 0, sizeof(struct sockaddr_in));
+  server_address.sin_family = AF_INET;
+  server_address.sin_port = htons(port);
+  server_address.sin_addr.s_addr = inet_addr(ip);
 
-    server_address.sin_family = AF_INET;
-    //our server socket listening port and ip
-    server_address.sin_port = htons(port);
-    server_address.sin_addr.s_addr = inet_addr(ip);
+  fprintf(std_log_file, "Starting socket setup:\n");
 
-    fprintf(std_log_file, "Starting socket setup:\n");
+  int server_sd;
+  if ((server_sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
+    perror("Socket creation failed"), exit(EXIT_FAILURE);
+  fprintf(std_log_file, "- Socket successfully created.\n");
 
-    int server_sd;
-    //creating a tcp socket to listen for client requests
-    if ((server_sd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0)
-      perror("Socket creation failed"), exit(EXIT_FAILURE);
-    fprintf(std_log_file, "- Socket successfully created.\n");
+  if (bind(server_sd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
+    perror("Socket bind failed"), exit(EXIT_FAILURE);
+  fprintf(std_log_file, "- Socket successfully binded.\n");
 
-    // bind socket to address
-    if (bind(server_sd, (struct sockaddr *)&server_address, sizeof(server_address)) < 0)
-      perror("Socket bind failed"), exit(EXIT_FAILURE);
-    fprintf(std_log_file, "- Socket successfully binded.\n");
+  if (listen(server_sd, max_pending_conn) < 0)
+    perror("Socket listen failed"), exit(EXIT_FAILURE);
+  fprintf(std_log_file, "- Socket listening at ip %s and port %u.\n\n", ip, (unsigned int)port);
 
-    // put socket in listen state
-    if (listen(server_sd, max_pending_conn) < 0)
-      perror("Socket listen failed"), exit(EXIT_FAILURE);
-    fprintf(std_log_file, "- Socket listening at ip %s and port %u.\n\n", ip, (unsigned int)port);
-
-    return server_sd;
+  return server_sd;
 }
 
 bool get_interface_ip(char const * const interface_name, char * const ip_output){

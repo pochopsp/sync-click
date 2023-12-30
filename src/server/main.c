@@ -106,7 +106,7 @@ int main(int argc, char* argv[]){
 
 	char conn_clients_msg[256];
 	sprintf(conn_clients_msg, "%d/%d clients connected\n", connected_clients, clients_count);
-	write(1, conn_clients_msg, strlen(conn_clients_msg));
+	write(STDOUT_FILENO, conn_clients_msg, strlen(conn_clients_msg));
 
 	while(!all_clients_connected){
 
@@ -125,7 +125,7 @@ int main(int argc, char* argv[]){
 		if(client_rtt > max_rtt) max_rtt = client_rtt;
 
 		sprintf(conn_clients_msg, "%d/%d clients connected (accepted %s - rtt %lu)\n", connected_clients, clients_count, inet_ntoa(cli.sin_addr), client_rtt);
-		write(1, conn_clients_msg, strlen(conn_clients_msg));
+		write(STDOUT_FILENO, conn_clients_msg, strlen(conn_clients_msg));
 
 		struct clientargs *args = malloc(sizeof(struct clientargs));
 		args->client_sock_fd = client_sock_fd;

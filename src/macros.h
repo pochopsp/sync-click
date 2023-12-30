@@ -2,7 +2,7 @@
 #define MACROS_H
 
 // COMMANDS
-#define EXT_CMD "cicl"
+#define EXT_CMD "cilc"
 #define CLK_CMD "clic"
 #define MY_RTT_CMD "my_rtt"
 #define MAX_RTT_CMD "max_rtt"

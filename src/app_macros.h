@@ -1,5 +1,5 @@
-#ifndef MACROS_H
-#define MACROS_H
+#ifndef APP_MACROS_H
+#define APP_MACROS_H
 
 // COMMANDS
 #define EXT_CMD "cilc"
@@ -10,4 +10,4 @@
 // NETWORK
 #define DEF_TCP_PORT 29900
 
-#endif // MACROS_H
+#endif // APP_MACROS_H

@@ -117,11 +117,11 @@ int main(int argc, char* argv[]){
 		if(client_sock_fd < 0){
 			fprintf(stderr, "Socket accept failed for %s: %s (errno = %d)\n", inet_ntoa(cli.sin_addr), strerror(errno), errno);
 			exit(EXIT_FAILURE);
-		}else{
-			++connected_clients;
-			sprintf(conn_clients_msg, "%d/%d clients connected (accepted client %s)\n", connected_clients, clients_count, inet_ntoa(cli.sin_addr));
-			write(1, conn_clients_msg, strlen(conn_clients_msg));
 		}
+
+		++connected_clients;
+		sprintf(conn_clients_msg, "%d/%d clients connected (accepted client %s)\n", connected_clients, clients_count, inet_ntoa(cli.sin_addr));
+		write(1, conn_clients_msg, strlen(conn_clients_msg));
 
 		unsigned long client_rtt = socket_rtt(client_sock_fd);
 		if(client_rtt > max_rtt) max_rtt = client_rtt;

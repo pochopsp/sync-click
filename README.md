@@ -45,7 +45,8 @@ To build the client executable just type the following command on console:
 # How to use it
 
 ### Server
-To start the server executable, you must give it the mandatory argument *<interface_name>* to specify on which network interface the socket will be listening. For example, to have it running on eth0 interface and TCP port 45230 start it like this:
+To start the server executable, you must give it the mandatory argument *<interface_name>* to specify on which network interface the socket will be listening.  
+For example, to have it running on eth0 interface and TCP port 45230 start it like this:
 	
  	./server eth0 -p 45230
 
@@ -53,7 +54,8 @@ It will give you some information on connected clients and, when they'll be all 
 Use ```./server -h ``` to have full information about options and operands.
 
 ### Client
-To start the client executable, you must give it with the mandatory argument *<ip_address>* to specify server address. For example, to have it connected with server at ip 123.231.123.231 and TCP port 45230 start it like this:
+To start the client executable, you must give it with the mandatory argument *<ip_address>* to specify server address.  
+For example, to have it connected with server at ip 123.231.123.231 and TCP port 45230 start it like this:
 	
  	./client 123.231.123.231 -p 45230
 

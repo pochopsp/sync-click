@@ -145,7 +145,7 @@ int main(int argc, char* argv[]){
 			pthread_cond_broadcast(&cond);
     		pthread_mutex_unlock(&mutex);
 
-			printf("\nSending MAX_RTT to all clients...\n\n");
+			printf("\nSending MAX_RTT of %lu to all clients...\n\n", max_rtt);
 		}
 
 	}

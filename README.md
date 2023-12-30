@@ -15,8 +15,8 @@ Let's say we have for example the *client_A* with a RTT of 3 seconds (I used sec
 Then the following will happen:
 	
  	02:18:40 PM - server sends CLK_CMD
- 	02:18:43 PM - client_A receives the message and awaits (MAX_RTT - MY_RTT) = (10 seconds -  3 seconds) = 7 seconds
-  	02:18:50 PM - client_M receives the message and awaits (MAX_RTT - MY_RTT) = (10 seconds - 10 seconds) = 0 seconds
+ 	02:18:43 PM - client_A receives CLK_CMD and awaits (MAX_RTT - MY_RTT) = (10 seconds -  3 seconds) = 7 seconds
+  	02:18:50 PM - client_M receives CLK_CMD and awaits (MAX_RTT - MY_RTT) = (10 seconds - 10 seconds) = 0 seconds
    
 This way, *client_A* awaits 7 seconds and *client_M* awaits 0 seconds, so that they **both** generate a click event at time **02:18:50 PM**, having the smallest possible delay.
 

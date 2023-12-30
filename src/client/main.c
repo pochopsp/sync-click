@@ -54,10 +54,10 @@ long my_rtt;
 long max_rtt;
 
 void handle_connection(SOCKET sockfd){
-	int readBytes;
+	int read_bytes;
 	char buff[BUF_SIZE];
 
-	while ((readBytes = recv(sockfd, buff, BUF_SIZE, 0)) > 0) {
+	while ((read_bytes = recv(sockfd, buff, BUF_SIZE, 0)) > 0) {
 		if ((strncmp(buff, MY_RTT_CMD, strlen(MY_RTT_CMD))) == 0) {
 			my_rtt = get_rtt_from_message(buff);
 			printf("Setting my rtt of %d...\n", my_rtt);

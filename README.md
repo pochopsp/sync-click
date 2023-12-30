@@ -18,7 +18,7 @@ Make sure you have all of the following on your machine:
 - gcc (tested on 10.2.1)
 ### Client
 - Microsoft Windows OS (tested on Windows 10)
-- Strawberry Perl (needed to have make and gcc on Windows, tested on 5.32.1.1)
+- Strawberry Perl (to have make, gcc and POSIX functs such as getopt on Windows, tested on 5.32.1.1)
 
 # Build
 

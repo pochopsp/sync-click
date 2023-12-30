@@ -150,6 +150,9 @@ int main(int argc, char* argv[]){
 
 	}
 
+	// close socket to prevent other clients to connect after clients_count has been reached
+	close(server_sock_fd);
+
 	// ############################################################################################
 
 	printf("\nReady to receive commands from command line...\n\n");

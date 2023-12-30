@@ -122,16 +122,31 @@ SOCKET setup_socket_to_server(char *dotted_ip, unsigned short port){
 	return sockfd;
 }
 
-// TODO refactor and delete it
-bool in_0_and_255(int num){
-	return num >= 0 && num <= 255;
-}
-
 // TODO unit test
-bool valid_ipv4(const char *ipv4){
-   int a, b, c, d;
-   int matched = sscanf(ipv4,"%d.%d.%d.%d", &a, &b, &c, &d);
-   return matched == 4 && in_0_and_255(a) && in_0_and_255(b) && in_0_and_255(c) && in_0_and_255(d);
+bool valid_ipv4(const char * const ip){
+	if(strlen(ip) > IPV4_DOTNTN_LENGTH) return false;
+
+    char ip_cpy[IPV4_DOTNTN_LENGTH+1];
+    strcpy(ip_cpy, ip);
+
+	char **ip_parts = splitString(ip_cpy, '.');
+
+	unsigned char ip_parts_count = 0;
+
+	for (unsigned char i = 0; *(ip_parts + i); ++i){
+		int ip_part;
+		int matched = sscanf(*(ip_parts + i),"%d", &ip_part);
+		if(matched != 1) return false;
+		if(ip_part < 0 || ip_part > 255) return false;
+		if( (ip_part < 10 && strlen(*(ip_parts + i)) > 1) ||
+		(ip_part > 10 && ip_part < 100 && strlen(*(ip_parts + i)) > 2) ||
+		(ip_part >= 100 && strlen(*(ip_parts + i)) > 3) ) return false;
+		++ip_parts_count;
+	}
+
+	if(ip_parts_count != 4) return false;
+
+	return true;
 }
 
 

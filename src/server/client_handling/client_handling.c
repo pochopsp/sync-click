@@ -22,9 +22,7 @@ void* client_thread_handler(void *args){
 
     // 1st step -- send the rtt for its own connection to this client "MY_RTT_CMD <rtt>"
     char str_rtt[256] = {'\0'};
-    strcat(str_rtt, MY_RTT_CMD);
-    strcat(str_rtt, " ");
-    sprintf(str_rtt+strlen(str_rtt), "%lu", client_rtt);
+    sprintf(str_rtt, "%s %lu", MY_RTT_CMD, client_rtt);
     write(client_sock_fd, str_rtt, strlen(str_rtt));
 
     // 2nd step -- send the max rtt among all clients to this client "MAX_RTT_CMD <rtt>"
@@ -34,9 +32,7 @@ void* client_thread_handler(void *args){
     }
     pthread_mutex_unlock(m);
     memset(str_rtt, 0, sizeof(str_rtt));
-    strcat(str_rtt, MAX_RTT_CMD);
-    strcat(str_rtt, " ");
-    sprintf(str_rtt+strlen(str_rtt), "%lu", max_rtt);
+    sprintf(str_rtt, "%s %lu", MAX_RTT_CMD, max_rtt);
     write(client_sock_fd, str_rtt, strlen(str_rtt));
 
     // 3rd step -- loop to wait for click requests

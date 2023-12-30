@@ -70,13 +70,11 @@ void handle_connection(SOCKET sockfd){
 			doDelayedLeftClick(max_rtt - my_rtt);
 			printf("Click received!\n");
 		}
-		else if ((strncmp(buff, EXT_CMD, strlen(EXT_CMD))) == 0) {
-			printf("client exit...\n");
-			break;
-		}
 		else
 			printf("%s: %s\n", UNK_MSSG, buff);
 	}
+
+	printf("Server closed the connection, exiting...\n");
 }
 
 void printhelp(char *program_name){

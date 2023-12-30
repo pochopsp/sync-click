@@ -11,7 +11,7 @@ Basically, the server sends the command *CLK_CMD* and the clients generate a lef
 
 To have the smallest delay as possible in a simultaneous click among the connected clients, I implemented the following logic:  
 Every client has a specific RTT, the server keeps count of each RTT and when the number of desired clients is reached, it sends the max RTT to the clients.
-Let's say we have for example the *client_A* with a RTT of 3 seconds (I used seconds to simplify the example) and then the client with max RTT of 10 seconds, let's call it *client_M*.
+Let's say we have for example the *client_A* with a RTT of 3 seconds (I used seconds to simplify the example) and then the client with max RTT of 10 seconds, let's call it *client_M*.  
 Then the following will happen:
 	
  	02:18:40 PM - server sends CLK_CMD

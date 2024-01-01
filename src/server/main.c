@@ -41,13 +41,21 @@
 // NETWORK CONSTANTS
 #define MAX_PENDING_CLIENTS 10
 
-
+static void signal_handler(int signum){
+  printf("\nsignal %d received, exiting...\n", signum);
+  exit(EXIT_SUCCESS);
+}
 
 int main(int argc, char* argv[]){
 
 	/* if a client closes its socket then a write on that socket
 	will result in a SIGPIPE, ignore it to keep the server running */
 	signal(SIGPIPE, SIG_IGN);
+
+    // same behaviour for these three signals
+	signal(SIGINT, signal_handler);
+	signal(SIGTERM, signal_handler);
+	signal(SIGTSTP, signal_handler);
 
 	uint16_t port = DEF_TCP_PORT;
 	uint8_t clients_count = DEF_CLIENT_COUNT;

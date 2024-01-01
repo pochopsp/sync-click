@@ -14,12 +14,12 @@ every client has a specific RTT, the server keeps track of each RTT and when the
 Then, when the server sends the message *CLK_CMD*, each client will wait for a time equal to the difference between max RTT and its own RTT before executing the click event.  
 
 #### Example
-Let's say we have two clients: *client_A* with a RTT of 3 millis and *client_M* with a RTT of 10 millis.  
+Let's say we have two clients: *cl_A* with a RTT of 3 millis and *cl_M* with a RTT of 10 millis.  
 When the server sends the message *CLK_CMD*, the following will happen:
 	
  	19:26:00.400 - server sends CLK_CMD
- 	19:26:00.430 - client_A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis -  3 millis) = 7 millis
-  	19:26:00:440 - client_M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis - 10 millis) = 0 millis
+ 	19:26:00.430 - cl_A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis -  3 millis) = 7 millis
+  	19:26:00:440 - cl_M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis - 10 millis) = 0 millis
    
 This way, *client_A* awaits 7 millis and *client_M* awaits 0 millis, so that they **both** generate a click event at time **19:26:00:440**, with the smallest possible delay.
 

@@ -46,6 +46,8 @@ static void signal_handler(int signum){
 
 int main(int argc, char* argv[]){
 
+	// ------------- signal handling -------------
+
 	/* if a client closes its socket then a write on that socket
 	will result in a SIGPIPE, ignore it to keep the server running */
 	signal(SIGPIPE, SIG_IGN);
@@ -54,6 +56,9 @@ int main(int argc, char* argv[]){
 	signal(SIGINT, signal_handler);
 	signal(SIGTERM, signal_handler);
 	signal(SIGTSTP, signal_handler);
+
+
+	// ------------- validate and process input -------------
 
 	uint16_t port = DEF_TCP_PORT;
 	uint8_t clients_count = DEF_CLIENT_COUNT;
@@ -105,6 +110,9 @@ int main(int argc, char* argv[]){
 		return 6;
 	}
 
+
+	// ------------- initalize server socket -------------
+
 	int server_sock_fd = setup_server_socket(MAX_PENDING_CLIENTS, local_ip, port);
 
 	bool all_clients_connected = false;
@@ -117,6 +125,9 @@ int main(int argc, char* argv[]){
 	char conn_clients_msg[256];
 	sprintf(conn_clients_msg, "%d/%d clients connected\n", connected_clients, clients_count);
 	write(STDOUT_FILENO, conn_clients_msg, strlen(conn_clients_msg));
+
+
+	// ------------- accept client connections -------------
 
 	while(!all_clients_connected){
 
@@ -163,7 +174,8 @@ int main(int argc, char* argv[]){
 	// close socket to prevent other clients to connect after clients_count has been reached
 	close(server_sock_fd);
 
-	// ############################################################################################
+
+	// ------------- receive and process commands from STDIN -------------
 
 	printf("\nReady to receive commands from command line...\n\n");
 

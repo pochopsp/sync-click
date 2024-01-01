@@ -16,7 +16,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <pthread.h>
-
+#include <signal.h>
 
 #include "../app_macros.h"
 #include "./network_functions/network_functions.h"
@@ -44,6 +44,10 @@
 
 
 int main(int argc, char* argv[]){
+
+	/* if a client closes its socket then a write on that socket
+	will result in a SIGPIPE, ignore it to keep the server running */
+	signal(SIGPIPE, SIG_IGN);
 
 	uint16_t port = DEF_TCP_PORT;
 	uint8_t clients_count = DEF_CLIENT_COUNT;

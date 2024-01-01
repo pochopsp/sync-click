@@ -164,7 +164,7 @@ int main(int argc, char* argv[]){
 			pthread_mutex_lock(&mutex);
 			time_to_send_maxrtt = true;
 			pthread_cond_broadcast(&cond);
-    		pthread_mutex_unlock(&mutex);
+			pthread_mutex_unlock(&mutex);
 
 			printf("\nSending MAX_RTT of %lu to all clients...\n\n", max_rtt);
 		}

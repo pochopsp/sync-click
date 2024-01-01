@@ -6,19 +6,22 @@ This project creates a client-server architecture with TCP sockets in which the 
 
 Both server and client are implemented in C. The server is made for POSIX compliant systems, while the client is made for Microsoft Windows since it uses its libs for sockets and hardware inputs.
 
-Network communication is made through TCP sockets with exchange of messages using a simple protocol defined for this app.
-Basically, the server sends the command *CLK_CMD* and the clients generate a left click event using OS native libs.
+Network communication is made through TCP sockets using a simple communication protocol defined for this app.
+Basically, the server sends the message *CLK_CMD* and the clients generate a left click event using OS native libs.
 
 To have the smallest delay as possible in a simultaneous click among the connected clients, I implemented the following logic:  
-Every client has a specific RTT, the server keeps count of each RTT and when the number of desired clients is reached, it sends the max RTT to the clients.
-Let's say we have for example the *client_A* with a RTT of 3 seconds (I used seconds to simplify the example) and then the client with max RTT of 10 seconds, let's call it *client_M*.  
-Then the following will happen:
+every client has a specific RTT, the server keeps track of each RTT and when the number of desired clients is reached, it sends the max RTT to the clients.
+Then, when the server sends the message *CLK_CMD*, each client will wait for a time equal to the difference between max RTT and its own RTT before executing the click event.  
+
+#### Example
+Let's say we have two clients: *client_A* with a RTT of 3 millis and *client_M* with a RTT of 10 millis.  
+When the server sends the message *CLK_CMD*, the following will happen:
 	
- 	02:18:40 PM - server sends CLK_CMD
- 	02:18:43 PM - client_A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 sec -  3 sec) = 7 sec
-  	02:18:50 PM - client_M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 sec - 10 sec) = 0 sec
+ 	19:26:00.400 - server sends CLK_CMD
+ 	19:26:00.430 - client_A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis -  3 millis) = 7 millis
+  	19:26:00:440 - client_M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis - 10 millis) = 0 millis
    
-This way, *client_A* awaits 7 seconds and *client_M* awaits 0 seconds, so that they **both** generate a click event at time **02:18:50 PM**, having the smallest possible delay.
+This way, *client_A* awaits 7 millis and *client_M* awaits 0 millis, so that they **both** generate a click event at time **19:26:00:440**, with the smallest possible delay.
 
 # Prerequisites
 Make sure you have all of the following on your machine:

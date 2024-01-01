@@ -21,7 +21,7 @@ When the server sends the message *CLK_CMD*, the following will happen:
  	19:26:00.430 - cl_A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis -  3 millis) = 7 millis
   	19:26:00:440 - cl_M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis - 10 millis) = 0 millis
    
-This way, *client_A* awaits 7 millis and *client_M* awaits 0 millis, so that they **both** generate a click event at time **19:26:00:440**, with the smallest possible delay.
+This way, *cl_A* awaits 7 millis and *cl_M* awaits 0 millis, so that they **both** generate a click event at time **19:26:00:440**, with the smallest possible delay.
 
 # Prerequisites
 Make sure you have all of the following on your machine:

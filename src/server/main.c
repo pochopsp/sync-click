@@ -25,8 +25,6 @@
 #include "../common/network_constants.h"
 
 
-// TODO implementare gestione segnali da terminale (ctrl+c ecc)
-
 // APPLICATION CONSTANTS
 #define BUF_SIZE 1024
 #define DEF_CLIENT_COUNT 2

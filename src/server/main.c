@@ -52,7 +52,7 @@ int main(int argc, char* argv[]){
 	will result in a SIGPIPE, ignore it to keep the server running */
 	signal(SIGPIPE, SIG_IGN);
 
-    // same behaviour for these three signals
+	// same behaviour for these three signals
 	signal(SIGINT, signal_handler);
 	signal(SIGTERM, signal_handler);
 	signal(SIGTSTP, signal_handler);

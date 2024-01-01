@@ -18,6 +18,9 @@
 # ignore .a files
 *.a
 
+# ignore .o files
+*.o
+
 # ignore .vscode dir
 .vscode
 

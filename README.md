@@ -18,10 +18,10 @@ Let's say we have two clients: *A* with a RTT of 3 millis and *M* with a RTT of 
 When the server sends the message *CLK_CMD*, the following will happen:
 	
  	19:26:00.400 - server sends CLK_CMD
- 	19:26:00.430 - A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis -  3 millis) = 7 millis
-  	19:26:00:440 - M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis - 10 millis) = 0 millis
+ 	19:26:00.403 - A receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis -  3 millis) = 7 millis
+  	19:26:00:410 - M receives CLK_CMD and waits (MAX_RTT - MY_RTT) = (10 millis - 10 millis) = 0 millis
    
-This way, *A* awaits 7 millis and *M* awaits 0 millis, so that they **both** generate a click event at time **19:26:00:440**, with the smallest possible delay.
+This way, *A* awaits 7 millis and *M* awaits 0 millis, so that they **both** generate a click event at time **19:26:00:410**, with the smallest possible delay.
 
 # Prerequisites
 Make sure you have all of the following on your machine:
